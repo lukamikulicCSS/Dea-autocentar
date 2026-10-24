@@ -173,13 +173,13 @@ export default async function HomePage() {
       {/* ZAŠTO DEA — samo tvrdnje koje salon sam navodi */}
       <section className="border-y border-line bg-white" aria-labelledby="zasto-naslov">
         <div className="wrap grid gap-10 py-16 sm:py-20 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-sm sm:aspect-[16/11] lg:aspect-auto lg:min-h-[480px]">
+            <div className="relative aspect-[4/5] overflow-hidden rounded-sm sm:aspect-square lg:aspect-auto lg:min-h-[480px]">
             <Image
-              src="/images/salon-ferrari-roma.jpg"
-              alt="Unutrašnjost salona Auto Centra DEA u Zenici"
+              src="/images/salon-dea-vanjski.jpg"
+              alt="Ferrari ispred salona Auto Centra DEA u Zenici"
               fill
               sizes="(min-width: 1024px) 45vw, 100vw"
-              className="object-cover object-[50%_40%]"
+              className="object-cover object-[50%_42%]"
             />
           </div>
           <div className="flex flex-col justify-center">
