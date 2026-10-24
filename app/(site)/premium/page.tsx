@@ -5,7 +5,7 @@ import { PageHeader } from "@/components/site/PageHeader";
 import { listingMetadata } from "@/lib/listing-meta";
 import { breadcrumbJsonLd } from "@/lib/seo";
 import { parseFilters } from "@/lib/vehicles/filters";
-import { filterableStatuses, getSiteSettings, searchVehicles } from "@/lib/vehicles/queries";
+import { filterableStatuses, getSiteSettings, mainListingStatuses, searchVehicles } from "@/lib/vehicles/queries";
 
 type Props = { searchParams: Promise<Record<string, string | string[] | undefined>> };
 
@@ -33,6 +33,7 @@ export default async function PremiumPage({ searchParams }: Props) {
         result={result}
         filters={filters}
         statuses={filterableStatuses(settings)}
+        suggestScope={{ statuses: filters.status ? [filters.status] : mainListingStatuses(settings), category: "premium" }}
         basePath="/premium"
         showCategory={false}
         variant="editorial"

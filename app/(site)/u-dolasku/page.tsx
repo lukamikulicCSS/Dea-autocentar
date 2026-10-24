@@ -35,6 +35,7 @@ export default async function ComingSoonPage({ searchParams }: Props) {
         result={result}
         filters={filters}
         statuses={["coming_soon"]}
+        suggestScope={{ statuses: ["coming_soon"] }}
         basePath="/u-dolasku"
         showStatus={false}
         emptyTitle="Trenutno nema najavljenih vozila"

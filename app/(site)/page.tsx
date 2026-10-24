@@ -9,7 +9,8 @@ import { VehicleCard, VehicleGrid } from "@/components/site/VehicleCard";
 import { HIGHLIGHTS } from "@/lib/content";
 import { phoneHref } from "@/lib/format";
 import { CATEGORY_LABELS } from "@/lib/vehicles/constants";
-import { getHomeSections, getSiteSettings } from "@/lib/vehicles/queries";
+import { getHomeSections, getSiteSettings, mainListingStatuses } from "@/lib/vehicles/queries";
+import { SearchSuggest } from "@/components/site/SearchSuggest";
 
 export const revalidate = 300;
 
@@ -70,7 +71,13 @@ export default async function HomePage() {
         <form action="/vozila" method="get" className="wrap grid gap-3 py-5 sm:grid-cols-[1.4fr_1fr_1fr_auto] sm:items-end">
           <div>
             <label htmlFor="hs-q" className="label text-fog">Marka ili model</label>
-            <input id="hs-q" name="q" type="search" maxLength={60} placeholder="npr. Audi, Golf, X5" className="field border-line-dark bg-asphalt text-white placeholder:text-[#7d838a] focus:border-white focus:shadow-[0_0_0_1px_#fff]" enterKeyHint="search" />
+            <SearchSuggest
+              id="hs-q"
+              placeholder="npr. BMW, Golf, X5"
+              tone="dark"
+              scope={{ statuses: mainListingStatuses(settings) }}
+              className="field border-line-dark bg-asphalt text-white placeholder:text-[#7d838a] focus:border-white focus:shadow-[0_0_0_1px_#fff]"
+            />
           </div>
           <div>
             <label htmlFor="hs-kat" className="label text-fog">Kategorija</label>

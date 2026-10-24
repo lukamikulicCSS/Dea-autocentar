@@ -7,6 +7,7 @@ import type { VehicleCard as Card } from "@/lib/types";
 import { FUEL_LABELS, TRANSMISSION_LABELS, type VehicleStatus } from "@/lib/vehicles/constants";
 import { activeFilterCount, filtersToSearch, type VehicleFilters } from "@/lib/vehicles/filters";
 import type { ListingResult } from "@/lib/vehicles/queries";
+import type { SuggestScope } from "@/lib/vehicles/suggest";
 import { EmptyState } from "./EmptyState";
 import { Filters, SortSelect } from "./Filters";
 import { Pagination } from "./Pagination";
@@ -90,6 +91,7 @@ export function VehicleListing({
   result,
   filters,
   statuses,
+  suggestScope,
   basePath,
   showCategory = true,
   showStatus = true,
@@ -100,6 +102,7 @@ export function VehicleListing({
   result: ListingResult;
   filters: VehicleFilters;
   statuses: VehicleStatus[];
+  suggestScope: SuggestScope;
   basePath: string;
   showCategory?: boolean;
   showStatus?: boolean;
@@ -110,7 +113,7 @@ export function VehicleListing({
   const active = activeFilterCount(filters);
   return (
     <div className="wrap grid gap-8 py-10 lg:grid-cols-[280px_1fr] lg:gap-12 lg:py-14">
-      <Filters filters={filters} statuses={statuses} showCategory={showCategory} showStatus={showStatus} activeCount={active} />
+      <Filters filters={filters} statuses={statuses} showCategory={showCategory} showStatus={showStatus} activeCount={active} suggestScope={suggestScope} />
 
       <div>
         <div className="mb-8 flex flex-wrap items-center justify-between gap-3 border-b border-line pb-4">

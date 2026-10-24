@@ -15,6 +15,8 @@ import {
   type VehicleStatus,
 } from "@/lib/vehicles/constants";
 import { SORT_LABELS, SORTS, type VehicleFilters } from "@/lib/vehicles/filters";
+import type { SuggestScope } from "@/lib/vehicles/suggest";
+import { SearchSuggest } from "./SearchSuggest";
 
 type Props = {
   filters: VehicleFilters;
@@ -22,6 +24,7 @@ type Props = {
   showCategory?: boolean;
   showStatus?: boolean;
   activeCount: number;
+  suggestScope: SuggestScope;
 };
 
 /** Pretvara formu u čisti URL (bez praznih parametara) — dijeljive poveznice. */
@@ -38,13 +41,13 @@ function useSubmit() {
   };
 }
 
-function FilterFields({ filters, statuses, showCategory = true, showStatus = true, idPrefix }: Props & { idPrefix: string }) {
+function FilterFields({ filters, statuses, showCategory = true, showStatus = true, suggestScope, idPrefix }: Props & { idPrefix: string }) {
   const id = (n: string) => `${idPrefix}-${n}`;
   return (
     <div className="space-y-5">
       <div>
         <label htmlFor={id("q")} className="label">Marka, model ili ključna riječ</label>
-        <input id={id("q")} name="q" type="search" defaultValue={filters.q} maxLength={60} className="field" placeholder="npr. Audi A6" enterKeyHint="search" />
+        <SearchSuggest id={id("q")} defaultValue={filters.q} placeholder="npr. BMW, Audi A6" scope={suggestScope} className="field" />
       </div>
 
       {showCategory && (

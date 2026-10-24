@@ -31,7 +31,7 @@ export default async function SoldPage({ searchParams }: Props) {
         description="Vozila koja su pronašla nove vlasnike. Tražite nešto slično? Javite nam se."
         crumbs={[{ name: "Početna", href: "/" }, { name: "Prodana vozila" }]}
       />
-      <VehicleListing result={result} filters={filters} statuses={["sold"]} basePath="/prodana-vozila" showStatus={false} emptyTitle="Arhiva je zasad prazna" emptyText="Prodana vozila pojavit će se ovdje." />
+      <VehicleListing result={result} filters={filters} statuses={["sold"]} suggestScope={{ statuses: ["sold"] }} basePath="/prodana-vozila" showStatus={false} emptyTitle="Arhiva je zasad prazna" emptyText="Prodana vozila pojavit će se ovdje." />
     </>
   );
 }

@@ -29,7 +29,7 @@ export default async function ReservedPage({ searchParams }: Props) {
         description="Za ova vozila trenutno postoji rezervacija. Ako rezervacija ne bude realizirana, vozilo se vraća u ponudu."
         crumbs={[{ name: "Početna", href: "/" }, { name: "Rezervirano" }]}
       />
-      <VehicleListing result={result} filters={filters} statuses={["reserved"]} basePath="/rezervirano" showStatus={false} emptyTitle="Trenutno nema rezerviranih vozila" emptyText="Pogledajte aktualnu ponudu dostupnih vozila." />
+      <VehicleListing result={result} filters={filters} statuses={["reserved"]} suggestScope={{ statuses: ["reserved"] }} basePath="/rezervirano" showStatus={false} emptyTitle="Trenutno nema rezerviranih vozila" emptyText="Pogledajte aktualnu ponudu dostupnih vozila." />
     </>
   );
 }
