@@ -8,7 +8,7 @@ import { NavLinks } from "./NavLinks";
 export function Header({ settings }: { settings: SiteSettings }) {
   return (
     <header className="sticky top-0 z-40 border-b border-line-dark bg-asphalt/95 text-white backdrop-blur-sm" style={{ paddingTop: "env(safe-area-inset-top)" }}>
-      <a href="#sadrzaj" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:bg-white focus:px-3 focus:py-2 focus:text-ink">
+      <a href="#sadrzaj" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:bg-surface focus:px-3 focus:py-2 focus:text-ink">
         Preskoči na sadržaj
       </a>
       <div className="wrap flex h-16 items-center justify-between gap-6">

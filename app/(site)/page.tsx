@@ -100,7 +100,7 @@ export default async function HomePage() {
 
       {nothingYet && (
         <section className="wrap py-16">
-          <div className="rounded-sm border border-dashed border-line bg-white p-8 text-center">
+          <div className="rounded-sm border border-dashed border-line bg-surface p-8 text-center">
             <h2 className="text-2xl">Ponuda se upravo osvježava</h2>
             <p className="mx-auto mt-3 max-w-md text-ink-muted">
               Nova vozila uskoro će biti objavljena. Javite nam se i rado ćemo vam reći što je trenutno u salonu.
@@ -171,9 +171,9 @@ export default async function HomePage() {
       )}
 
       {/* ZAŠTO DEA — samo tvrdnje koje salon sam navodi */}
-      <section className="border-y border-line bg-white" aria-labelledby="zasto-naslov">
+      <section className="border-y border-line bg-surface" aria-labelledby="zasto-naslov">
         <div className="wrap grid gap-10 py-16 sm:py-20 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
-            <div className="relative aspect-[4/5] overflow-hidden rounded-sm sm:aspect-square lg:aspect-auto lg:min-h-[480px]">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-sm sm:aspect-square lg:aspect-auto lg:min-h-[480px]">
             <Image
               src="/images/salon-dea-vanjski.jpg"
               alt="Ferrari ispred salona Auto Centra DEA u Zenici"

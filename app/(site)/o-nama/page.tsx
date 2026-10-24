@@ -52,7 +52,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="border-t border-line bg-white" aria-labelledby="usluge">
+      <section className="border-t border-line bg-surface" aria-labelledby="usluge">
         <div className="wrap py-14 lg:py-20">
           <h2 id="usluge" className="text-[1.75rem] sm:text-[2.125rem]">Što dobivate kod nas</h2>
           <dl className="mt-10 grid gap-x-10 gap-y-8 sm:grid-cols-2">

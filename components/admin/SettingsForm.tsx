@@ -37,7 +37,7 @@ function toValues(s: SiteSettings, notify: string[]): Record<string, string> {
 
 function Group({ title, description, children }: { title: string; description?: string; children: React.ReactNode }) {
   return (
-    <fieldset className="rounded-sm border border-line bg-white p-4 sm:p-6">
+    <fieldset className="rounded-sm border border-line bg-surface p-4 sm:p-6">
       <legend className="sr-only">{title}</legend>
       <h2 className="text-lg" style={{ fontStretch: "105%" }}>{title}</h2>
       {description && <p className="mt-1 text-sm text-ink-muted">{description}</p>}

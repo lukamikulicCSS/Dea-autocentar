@@ -30,7 +30,7 @@ export default async function ContactPage() {
       />
       <section className="wrap grid gap-12 py-14 lg:grid-cols-2 lg:gap-20 lg:py-20">
         <ContactDetails settings={settings} tone="light" />
-        <div className="rounded-sm border border-line bg-white p-6 sm:p-8">
+        <div className="rounded-sm border border-line bg-surface p-6 sm:p-8">
           <h2 className="text-xl" style={{ fontStretch: "110%" }}>Pošaljite upit</h2>
           <p className="mb-6 mt-2 text-[0.9375rem] text-ink-muted">Dovoljna je vaša email adresa. Napišite što vas zanima i javit ćemo vam se.</p>
           <InquiryForm />

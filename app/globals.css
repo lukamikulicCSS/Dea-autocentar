@@ -44,10 +44,12 @@
   --color-fog: #a6acb3;
   --color-red: #d71920;
   --color-red-deep: #b4141a;
-  --color-paper: #f5f5f2;
-  --color-ink: #17191c;
-  --color-ink-muted: #555b62;
-  --color-line: #dcdcd5;
+  /* Svijetle površine i tekst: vrijednosti ovise o temi uređaja (vidi :root niže) */
+  --color-paper: var(--c-paper);
+  --color-ink: var(--c-ink);
+  --color-ink-muted: var(--c-ink-muted);
+  --color-line: var(--c-line);
+  --color-surface: var(--c-surface);
   --color-steel: #416a8a;
   --color-steel-light: #93b6d2;
 
@@ -64,9 +66,38 @@
 }
 
 @layer base {
+  /* Svijetla tema (zadano) */
   :root {
     --bottom-nav-h: 0px;
-    color-scheme: light;
+    color-scheme: light dark;
+
+    --c-paper: #f5f5f2;
+    --c-ink: #17191c;
+    --c-ink-muted: #555b62;
+    --c-line: #dcdcd5;
+    --c-surface: #ffffff;
+    --c-hover-line: #b9b9b1;
+    --c-skeleton: #e9e9e4;
+    --c-skeleton-hi: #f3f3ef;
+    --c-btn-dark: #17191c;
+    --c-btn-dark-hover: #000000;
+    --c-btn-dark-text: #ffffff;
+  }
+  /* Tamna tema: prati postavku uređaja (iOS i Android, mobitel i računalo) */
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --c-paper: #111315;
+      --c-ink: #eceee9;
+      --c-ink-muted: #a6acb3;
+      --c-line: #30353b;
+      --c-surface: #1b1e22;
+      --c-hover-line: #4a5058;
+      --c-skeleton: #1f2328;
+      --c-skeleton-hi: #2a2f35;
+      --c-btn-dark: #eceee9;
+      --c-btn-dark-hover: #ffffff;
+      --c-btn-dark-text: #111315;
+    }
   }
   @media (max-width: 1023.98px) {
     :root {
@@ -171,15 +202,15 @@
     background: var(--color-red-deep);
   }
   .btn-dark {
-    background: var(--color-ink);
-    color: #fff;
+    background: var(--c-btn-dark);
+    color: var(--c-btn-dark-text);
   }
   .btn-dark:hover {
-    background: #000;
+    background: var(--c-btn-dark-hover);
   }
   .btn-outline {
     border: 1px solid var(--color-line);
-    background: #fff;
+    background: var(--color-surface);
     color: var(--color-ink);
   }
   .btn-outline:hover {
@@ -206,13 +237,13 @@
     padding: 0.625rem 0.875rem;
     border: 1px solid var(--color-line);
     border-radius: var(--radius-md);
-    background: #fff;
+    background: var(--color-surface);
     color: var(--color-ink);
     font-size: 1rem; /* 16px sprječava automatsko zumiranje na iOS-u */
     transition: border-color 140ms ease;
   }
   .field:hover {
-    border-color: #b9b9b1;
+    border-color: var(--c-hover-line);
   }
   .field:focus {
     outline: none;
@@ -228,6 +259,11 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath stroke='%2317191C' stroke-width='1.6' d='m1 1.5 5 5 5-5'/%3E%3C/svg%3E");
     background-repeat: no-repeat;
     background-position: right 0.9rem center;
+  }
+  @media (prefers-color-scheme: dark) {
+    select.field {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none'%3E%3Cpath stroke='%23ECEEE9' stroke-width='1.6' d='m1 1.5 5 5 5-5'/%3E%3C/svg%3E");
+    }
   }
   textarea.field {
     min-height: 120px;
@@ -322,7 +358,7 @@
   animation: slash 700ms var(--ease-out-quart) 420ms both;
 }
 .skeleton {
-  background: linear-gradient(90deg, #e9e9e4 0%, #f3f3ef 50%, #e9e9e4 100%);
+  background: linear-gradient(90deg, var(--c-skeleton) 0%, var(--c-skeleton-hi) 50%, var(--c-skeleton) 100%);
   background-size: 200% 100%;
   animation: shimmer 1.4s linear infinite;
 }

@@ -10,7 +10,7 @@ export default async function NewPasswordPage() {
   return (
     <>
       <AdminPageTitle title="Postavite novu lozinku" description="Upišite novu lozinku za svoj račun." />
-      <div className="max-w-md rounded-sm border border-line bg-white p-6">
+      <div className="max-w-md rounded-sm border border-line bg-surface p-6">
         <PasswordForm />
       </div>
     </>

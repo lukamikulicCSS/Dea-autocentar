@@ -39,19 +39,19 @@ export default async function SettingsPage() {
       <AdminPageTitle title="Postavke" description="Podaci o salonu, tekstovi na stranici, obavijesti i pristup administraciji." />
       {settings && <SettingsForm settings={settings as SiteSettings} notificationEmails={(priv?.notification_emails as string[]) ?? []} />}
 
-      <section className="mt-10 rounded-sm border border-line bg-white p-4 sm:p-6" aria-labelledby="admini">
+      <section className="mt-10 rounded-sm border border-line bg-surface p-4 sm:p-6" aria-labelledby="admini">
         <h2 id="admini" className="text-lg" style={{ fontStretch: "105%" }}>Administratori</h2>
         <div className="mt-5">
           <AdminUsers admins={admins ?? []} currentUserId={userId} />
         </div>
       </section>
 
-      <section className="mt-5 rounded-sm border border-line bg-white p-4 sm:p-6" aria-labelledby="lozinka">
+      <section className="mt-5 rounded-sm border border-line bg-surface p-4 sm:p-6" aria-labelledby="lozinka">
         <h2 id="lozinka" className="mb-5 text-lg" style={{ fontStretch: "105%" }}>Promjena vaše lozinke</h2>
         <PasswordForm />
       </section>
 
-      <section className="mt-5 rounded-sm border border-line bg-white p-4 sm:p-6" aria-labelledby="integracije">
+      <section className="mt-5 rounded-sm border border-line bg-surface p-4 sm:p-6" aria-labelledby="integracije">
         <h2 id="integracije" className="text-lg" style={{ fontStretch: "105%" }}>Stanje integracija</h2>
         <p className="mt-1 text-sm text-ink-muted">Postavlja ih developer preko varijabli okruženja na hostingu.</p>
         <ul className="mt-3 divide-y divide-line">

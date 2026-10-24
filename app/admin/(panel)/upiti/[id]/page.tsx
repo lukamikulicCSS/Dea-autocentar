@@ -35,7 +35,7 @@ export default async function InquiryPage({ params }: PageProps<"/admin/upiti/[i
         Svi upiti
       </Link>
       <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
-        <section className="rounded-sm border border-line bg-white p-5 sm:p-6">
+        <section className="rounded-sm border border-line bg-surface p-5 sm:p-6">
           <p className="tabular text-sm text-ink-muted">{formatDateTime(inquiry.created_at)}</p>
           <h1 className="mt-1 break-all text-2xl">{inquiry.email}</h1>
           <dl className="mt-5 space-y-4 text-[0.9375rem]">
@@ -56,7 +56,7 @@ export default async function InquiryPage({ params }: PageProps<"/admin/upiti/[i
             </div>
           </dl>
         </section>
-        <section className="rounded-sm border border-line bg-white p-5 sm:p-6">
+        <section className="rounded-sm border border-line bg-surface p-5 sm:p-6">
           <InquiryControls
             id={inquiry.id}
             email={inquiry.email}

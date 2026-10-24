@@ -98,7 +98,7 @@ function toFormValues(v: EditableVehicle | null): Record<string, string> {
 
 function Section({ letter, title, description, children }: { letter: string; title: string; description?: string; children: React.ReactNode }) {
   return (
-    <fieldset className="rounded-sm border border-line bg-white p-4 sm:p-6">
+    <fieldset className="rounded-sm border border-line bg-surface p-4 sm:p-6">
       <legend className="sr-only">{title}</legend>
       <div className="mb-5 flex items-baseline gap-3">
         <span className="tabular text-sm font-bold text-red" aria-hidden="true">{letter}</span>

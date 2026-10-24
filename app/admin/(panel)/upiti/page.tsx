@@ -55,7 +55,7 @@ export default async function InquiriesPage({ searchParams }: PageProps<"/admin/
       <AdminPageTitle title="Upiti" description="Upiti kupaca s web stranice. Vidljivi su samo administratorima." />
       {sp.obrisano && <div className="mb-5"><Notice tone="success">Upit je obrisan.</Notice></div>}
 
-      <form method="get" className="mb-6 grid gap-2 rounded-sm border border-line bg-white p-3 sm:grid-cols-[1.6fr_1fr_1fr_auto]">
+      <form method="get" className="mb-6 grid gap-2 rounded-sm border border-line bg-surface p-3 sm:grid-cols-[1.6fr_1fr_1fr_auto]">
         <div className="relative">
           <label htmlFor="iq" className="sr-only">Pretraga po emailu ili vozilu</label>
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted" aria-hidden="true" />
@@ -74,9 +74,9 @@ export default async function InquiriesPage({ searchParams }: PageProps<"/admin/
 
       {error && <Notice tone="error">Upite trenutno nije moguće učitati.</Notice>}
       {rows.length === 0 && !error ? (
-        <div className="rounded-sm border border-dashed border-line bg-white p-10 text-center text-ink-muted">Nema upita za odabrane kriterije.</div>
+        <div className="rounded-sm border border-dashed border-line bg-surface p-10 text-center text-ink-muted">Nema upita za odabrane kriterije.</div>
       ) : (
-        <ul className="divide-y divide-line overflow-hidden rounded-sm border border-line bg-white">
+        <ul className="divide-y divide-line overflow-hidden rounded-sm border border-line bg-surface">
           {rows.map((r) => (
             <li key={r.id}>
               <Link href={`/admin/upiti/${r.id}`} className={`grid gap-1 px-4 py-3.5 hover:bg-paper sm:grid-cols-[1fr_auto] sm:items-center ${r.is_read ? "" : "bg-[#fdf6f6]"}`}>

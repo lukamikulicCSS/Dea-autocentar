@@ -106,7 +106,7 @@ export function VehicleDetailView({
             </p>
           )}
           {sold && (
-            <div className="mt-5 rounded-sm border border-line bg-white p-4 text-[0.9375rem]">
+            <div className="mt-5 rounded-sm border border-line bg-surface p-4 text-[0.9375rem]">
               <p className="font-semibold">Ovo vozilo je prodano.</p>
               <p className="mt-1 text-ink-muted">Pogledajte slična vozila iz aktualne ponude ili nam javite što tražite.</p>
               <Link href="/vozila" className="btn btn-dark btn-sm mt-4">Aktualna ponuda</Link>
@@ -195,7 +195,7 @@ export function VehicleDetailView({
 
         {canInquire && (
           <aside id="upit" aria-labelledby="upit-naslov" className="scroll-mt-24 lg:sticky lg:top-24 lg:self-start">
-            <div className="rounded-sm border border-line bg-white p-6">
+            <div className="rounded-sm border border-line bg-surface p-6">
               <h2 id="upit-naslov" className="text-xl" style={{ fontStretch: "110%" }}>Upit za ovo vozilo</h2>
               <p className="mb-5 mt-2 text-[0.9375rem] text-ink-muted">Dovoljna je vaša email adresa. Odgovaramo što prije.</p>
               <InquiryForm vehicleId={v.id} defaultMessage={defaultMessage} compact />
@@ -205,7 +205,7 @@ export function VehicleDetailView({
       </div>
 
       {related.length > 0 && (
-        <section className="border-t border-line bg-white py-14" aria-labelledby="slicna">
+        <section className="border-t border-line bg-surface py-14" aria-labelledby="slicna">
           <div className="wrap">
             <h2 id="slicna" className="mb-8 text-2xl">Slična vozila</h2>
             <VehicleGrid vehicles={related} />

@@ -93,7 +93,7 @@ export default async function AdminVehiclesPage({ searchParams }: PageProps<"/ad
 
       {sp.obrisano && <div className="mb-6"><Notice tone="success">Vozilo je obrisano.</Notice></div>}
 
-      <form method="get" className="mb-6 grid gap-2 rounded-sm border border-line bg-white p-3 sm:grid-cols-[1.6fr_1fr_1fr_1fr_1fr_auto]">
+      <form method="get" className="mb-6 grid gap-2 rounded-sm border border-line bg-surface p-3 sm:grid-cols-[1.6fr_1fr_1fr_1fr_1fr_auto]">
         <div className="relative">
           <label htmlFor="aq" className="sr-only">Pretraga</label>
           <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted" aria-hidden="true" />
@@ -123,7 +123,7 @@ export default async function AdminVehiclesPage({ searchParams }: PageProps<"/ad
       {error && <Notice tone="error">Popis trenutno nije moguće učitati.</Notice>}
 
       {rows.length === 0 && !error ? (
-        <div className="rounded-sm border border-dashed border-line bg-white p-10 text-center">
+        <div className="rounded-sm border border-dashed border-line bg-surface p-10 text-center">
           <p className="font-semibold">Nema vozila za odabrane kriterije.</p>
           <Link href="/admin/vozila/novo" className="btn btn-primary mt-5">Dodaj vozilo</Link>
         </div>
@@ -132,7 +132,7 @@ export default async function AdminVehiclesPage({ searchParams }: PageProps<"/ad
           {rows.map((v) => {
             const cover = v.vehicle_images[0];
             return (
-              <li key={v.id} className="grid gap-4 rounded-sm border border-line bg-white p-3 sm:p-4 md:grid-cols-[120px_1fr_auto] md:items-center">
+              <li key={v.id} className="grid gap-4 rounded-sm border border-line bg-surface p-3 sm:p-4 md:grid-cols-[120px_1fr_auto] md:items-center">
                 <Link href={`/admin/vozila/${v.id}`} className="relative block aspect-[4/3] w-full overflow-hidden rounded-sm bg-[#e7e7e2] md:w-[120px]" tabIndex={-1} aria-hidden="true">
                   {cover ? (
                     <Image src={vehicleImageUrl(cover.storage_path)} alt="" fill sizes="(min-width: 768px) 120px, 100vw" className="object-cover" />

@@ -122,7 +122,7 @@ export function SearchSuggest({
           role="listbox"
           aria-label="Prijedlozi"
           className={`absolute inset-x-0 top-full z-30 mt-1 max-h-80 overflow-y-auto rounded-md border py-1 shadow-[0_8px_24px_rgb(17_19_21/0.18)] ${
-            dark ? "border-line-dark bg-graphite text-white" : "border-line bg-white text-ink"
+            dark ? "border-line-dark bg-graphite text-white" : "border-line bg-surface text-ink"
           }`}
         >
           {items.map((item, i) => (

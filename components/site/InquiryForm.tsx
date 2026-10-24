@@ -28,7 +28,7 @@ export function InquiryForm({
 
   if (state.status === "success") {
     return (
-      <div role="status" className={`flex gap-3 rounded-sm border p-5 ${dark ? "border-line-dark bg-graphite text-white" : "border-line bg-white"}`}>
+      <div role="status" className={`flex gap-3 rounded-sm border p-5 ${dark ? "border-line-dark bg-graphite text-white" : "border-line bg-surface"}`}>
         <CircleCheck className="mt-0.5 size-5 shrink-0 text-status-available" aria-hidden="true" />
         <div>
           <p className="font-semibold">Upit je zaprimljen.</p>

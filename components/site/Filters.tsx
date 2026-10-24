@@ -189,7 +189,7 @@ export function Filters(props: Props) {
               <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-5">
                 <FilterFields {...props} idPrefix="m" />
               </div>
-              <div className="flex gap-2 border-t border-line bg-white px-4 py-3" style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}>
+              <div className="flex gap-2 border-t border-line bg-surface px-4 py-3" style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}>
                 {props.activeCount > 0 && (
                   <a href={pathname} className="btn btn-outline">Očisti sve</a>
                 )}

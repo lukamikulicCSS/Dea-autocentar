@@ -13,7 +13,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
   return (
     <div className="lg:grid lg:min-h-dvh lg:grid-cols-[248px_1fr]">
       <aside className="hidden flex-col bg-asphalt p-4 lg:flex">
-        <Link href="/admin" className="mb-8 mt-2 block px-3" aria-label="Administracija – pregled">
+        <Link href="/" className="mb-8 mt-2 block px-3" aria-label="Otvori web stranicu Auto Centra DEA">
           <Logo variant="light" className="w-[92px]" />
         </Link>
         <nav aria-label="Administracija" className="flex-1">
@@ -36,7 +36,7 @@ export default async function PanelLayout({ children }: { children: React.ReactN
 
       <div className="min-w-0">
         <header className="sticky top-0 z-30 flex h-14 items-center justify-between border-b border-line-dark bg-asphalt px-4 lg:hidden" style={{ paddingTop: "env(safe-area-inset-top)" }}>
-          <Link href="/admin" aria-label="Administracija – pregled">
+          <Link href="/" aria-label="Otvori web stranicu Auto Centra DEA">
             <Logo variant="light" className="w-[72px]" />
           </Link>
           <div className="flex items-center gap-1">
