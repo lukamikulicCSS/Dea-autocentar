@@ -19,4 +19,5 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       <BottomNav />
     </div>
   );
+  import { Analytics } from "@vercel/analytics/next"
 }
