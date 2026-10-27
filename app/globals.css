@@ -288,6 +288,65 @@
     font-weight: 500;
   }
 
+  /* Klizač s dva hvatišta: dva range polja jedno preko drugog; klikaju se samo hvatišta */
+  .range-dual input[type="range"] {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: transparent;
+    pointer-events: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .range-dual input[type="range"]::-webkit-slider-runnable-track {
+    background: transparent;
+    border: 0;
+  }
+  .range-dual input[type="range"]::-moz-range-track {
+    background: transparent;
+    border: 0;
+  }
+  .range-dual input[type="range"]::-webkit-slider-thumb {
+    pointer-events: auto;
+    -webkit-appearance: none;
+    width: 26px;
+    height: 26px;
+    border-radius: 9999px;
+    background: var(--color-surface);
+    border: 2px solid var(--color-red);
+    box-shadow: 0 1px 4px rgb(17 19 21 / 0.25);
+    cursor: grab;
+    transition: transform 120ms ease;
+  }
+  .range-dual input[type="range"]::-moz-range-thumb {
+    pointer-events: auto;
+    width: 22px;
+    height: 22px;
+    border-radius: 9999px;
+    background: var(--color-surface);
+    border: 2px solid var(--color-red);
+    box-shadow: 0 1px 4px rgb(17 19 21 / 0.25);
+    cursor: grab;
+  }
+  .range-dual input[type="range"]:active::-webkit-slider-thumb {
+    cursor: grabbing;
+    transform: scale(1.1);
+  }
+  .range-dual input[type="range"]:focus {
+    outline: none;
+  }
+  .range-dual input[type="range"]:focus-visible::-webkit-slider-thumb {
+    outline: 2px solid var(--color-red);
+    outline-offset: 3px;
+  }
+  .range-dual input[type="range"]:focus-visible::-moz-range-thumb {
+    outline: 2px solid var(--color-red);
+    outline-offset: 3px;
+  }
+
   /* Prostor ispod sadržaja da ga donja navigacija na mobitelu nikad ne prekrije */
   .pb-nav {
     padding-bottom: var(--bottom-nav-h);
@@ -357,6 +416,61 @@
   transform-origin: left center;
   animation: slash 700ms var(--ease-out-quart) 420ms both;
 }
+/* Naslovna: impulsi svjetla putuju kroz tragove iza auta (prema natrag, kao u vožnji) */
+@keyframes streak-sweep {
+  from {
+    mask-position: 0% 0;
+    -webkit-mask-position: 0% 0;
+  }
+  to {
+    mask-position: 100% 0;
+    -webkit-mask-position: 100% 0;
+  }
+}
+/* Farovi se upale s kratkim treperenjem, zatim lagano tinjaju */
+@keyframes lights-on {
+  0% { opacity: 0; }
+  8% { opacity: 0.9; }
+  12% { opacity: 0.1; }
+  20% { opacity: 1; }
+  24% { opacity: 0.35; }
+  40%,
+  100% { opacity: 1; }
+}
+@keyframes lights-breathe {
+  from { opacity: 1; }
+  to { opacity: 0.55; }
+}
+.hero-streaks {
+  mix-blend-mode: screen;
+  /* Impulsi su samo u srednjoj trećini maske, pa nema skoka pri ponavljanju */
+  --sweep: linear-gradient(90deg, transparent 0%, transparent 36%, #000 40%, transparent 44%, transparent 54%, #000 58%, transparent 62%, transparent 100%);
+  mask-image: var(--sweep);
+  -webkit-mask-image: var(--sweep);
+  mask-size: 300% 100%;
+  -webkit-mask-size: 300% 100%;
+  mask-repeat: no-repeat;
+  -webkit-mask-repeat: no-repeat;
+  animation: streak-sweep 5s linear 1.2s infinite both;
+}
+.hero-lights {
+  mix-blend-mode: screen;
+  opacity: 0;
+  animation:
+    lights-on 1.4s steps(1, end) 0.9s forwards,
+    lights-breathe 2.8s ease-in-out 2.6s infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  /* Bez pokreta: tragovi ostaju kao na fotografiji, farovi su upaljeni */
+  .hero-streaks {
+    display: none;
+  }
+  .hero-lights {
+    animation: none !important;
+    opacity: 1;
+  }
+}
+
 .skeleton {
   background: linear-gradient(90deg, var(--c-skeleton) 0%, var(--c-skeleton-hi) 50%, var(--c-skeleton) 100%);
   background-size: 200% 100%;

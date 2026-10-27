@@ -112,7 +112,7 @@ export function VehicleListing({
 }) {
   const active = activeFilterCount(filters);
   return (
-    <div className="wrap grid gap-8 py-10 lg:grid-cols-[280px_1fr] lg:gap-12 lg:py-14">
+    <div className="wrap grid gap-8 py-10 lg:grid-cols-[320px_1fr] lg:gap-10 lg:py-14">
       <Filters filters={filters} statuses={statuses} showCategory={showCategory} showStatus={showStatus} activeCount={active} suggestScope={suggestScope} />
 
       <div>

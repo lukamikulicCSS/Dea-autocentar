@@ -2,7 +2,7 @@
 
 import { usePathname, useRouter } from "next/navigation";
 import { useRef } from "react";
-import { SlidersHorizontal, X } from "lucide-react";
+import { RotateCcw, SlidersHorizontal, X } from "lucide-react";
 import {
   BODY_LABELS,
   BODY_TYPES,
@@ -16,6 +16,7 @@ import {
 } from "@/lib/vehicles/constants";
 import { SORT_LABELS, SORTS, type VehicleFilters } from "@/lib/vehicles/filters";
 import type { SuggestScope } from "@/lib/vehicles/suggest";
+import { KmRange } from "./KmRange";
 import { SearchSuggest } from "./SearchSuggest";
 
 type Props = {
@@ -26,6 +27,12 @@ type Props = {
   activeCount: number;
   suggestScope: SuggestScope;
 };
+
+const FIRST_YEAR = 1990;
+function years(): number[] {
+  const last = new Date().getFullYear() + 1;
+  return Array.from({ length: last - FIRST_YEAR + 1 }, (_, i) => last - i);
+}
 
 /** Pretvara formu u čisti URL (bez praznih parametara) — dijeljive poveznice. */
 function useSubmit() {
@@ -43,6 +50,7 @@ function useSubmit() {
 
 function FilterFields({ filters, statuses, showCategory = true, showStatus = true, suggestScope, idPrefix }: Props & { idPrefix: string }) {
   const id = (n: string) => `${idPrefix}-${n}`;
+  const yearList = years();
   return (
     <div className="space-y-5">
       <div>
@@ -73,50 +81,60 @@ function FilterFields({ filters, statuses, showCategory = true, showStatus = tru
         </div>
       )}
 
-      <fieldset>
-        <legend className="label">Cijena (KM)</legend>
-        <div className="grid grid-cols-2 gap-2">
-          <input aria-label="Cijena od (KM)" name="cijenaOd" inputMode="numeric" pattern="[0-9]*" defaultValue={filters.cijenaOd} className="field tabular" placeholder="Od" />
-          <input aria-label="Cijena do (KM)" name="cijenaDo" inputMode="numeric" pattern="[0-9]*" defaultValue={filters.cijenaDo} className="field tabular" placeholder="Do" />
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label htmlFor={id("godinaOd")} className="label">Godina od</label>
+          <select id={id("godinaOd")} name="godinaOd" defaultValue={filters.godinaOd ?? ""} className="field tabular">
+            <option value="">—</option>
+            {yearList.map((y) => (
+              <option key={y} value={y}>{y}.</option>
+            ))}
+          </select>
         </div>
-      </fieldset>
-
-      <fieldset>
-        <legend className="label">Godina proizvodnje</legend>
-        <div className="grid grid-cols-2 gap-2">
-          <input aria-label="Godina od" name="godinaOd" inputMode="numeric" pattern="[0-9]*" maxLength={4} defaultValue={filters.godinaOd} className="field tabular" placeholder="Od" />
-          <input aria-label="Godina do" name="godinaDo" inputMode="numeric" pattern="[0-9]*" maxLength={4} defaultValue={filters.godinaDo} className="field tabular" placeholder="Do" />
+        <div>
+          <label htmlFor={id("godinaDo")} className="label">Godina do</label>
+          <select id={id("godinaDo")} name="godinaDo" defaultValue={filters.godinaDo ?? ""} className="field tabular">
+            <option value="">—</option>
+            {yearList.map((y) => (
+              <option key={y} value={y}>{y}.</option>
+            ))}
+          </select>
         </div>
-      </fieldset>
-
-      <div>
-        <label htmlFor={id("kmDo")} className="label">Prijeđeni kilometri – najviše</label>
-        <select id={id("kmDo")} name="kmDo" defaultValue={filters.kmDo ?? ""} className="field">
-          <option value="">Bez ograničenja</option>
-          {[10000, 25000, 50000, 75000, 100000, 150000, 200000].map((km) => (
-            <option key={km} value={km}>do {km.toLocaleString("hr-HR")} km</option>
-          ))}
-        </select>
       </div>
 
-      <div>
-        <label htmlFor={id("gorivo")} className="label">Gorivo</label>
-        <select id={id("gorivo")} name="gorivo" defaultValue={filters.gorivo ?? ""} className="field">
-          <option value="">Sva goriva</option>
-          {FUEL_TYPES.map((f) => (
-            <option key={f} value={f}>{FUEL_LABELS[f]}</option>
-          ))}
-        </select>
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label htmlFor={id("cijenaOd")} className="label">Cijena od (KM)</label>
+          <input id={id("cijenaOd")} name="cijenaOd" inputMode="numeric" pattern="[0-9]*" defaultValue={filters.cijenaOd} className="field tabular" placeholder="npr. 10000" />
+        </div>
+        <div>
+          <label htmlFor={id("cijenaDo")} className="label">Cijena do (KM)</label>
+          <input id={id("cijenaDo")} name="cijenaDo" inputMode="numeric" pattern="[0-9]*" defaultValue={filters.cijenaDo} className="field tabular" placeholder="npr. 50000" />
+        </div>
       </div>
 
-      <div>
-        <label htmlFor={id("mjenjac")} className="label">Mjenjač</label>
-        <select id={id("mjenjac")} name="mjenjac" defaultValue={filters.mjenjac ?? ""} className="field">
-          <option value="">Svi mjenjači</option>
-          {TRANSMISSIONS.map((t) => (
-            <option key={t} value={t}>{TRANSMISSION_LABELS[t]}</option>
-          ))}
-        </select>
+      {/* key: klizač se vraća na početak kad se filteri promijene izvana */}
+      <KmRange key={`${filters.kmOd ?? ""}-${filters.kmDo ?? ""}`} idPrefix={idPrefix} kmOd={filters.kmOd} kmDo={filters.kmDo} />
+
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label htmlFor={id("gorivo")} className="label">Gorivo</label>
+          <select id={id("gorivo")} name="gorivo" defaultValue={filters.gorivo ?? ""} className="field">
+            <option value="">Sva goriva</option>
+            {FUEL_TYPES.map((f) => (
+              <option key={f} value={f}>{FUEL_LABELS[f]}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor={id("mjenjac")} className="label">Mjenjač</label>
+          <select id={id("mjenjac")} name="mjenjac" defaultValue={filters.mjenjac ?? ""} className="field">
+            <option value="">Svi mjenjači</option>
+            {TRANSMISSIONS.map((t) => (
+              <option key={t} value={t}>{TRANSMISSION_LABELS[t]}</option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div>
@@ -149,12 +167,14 @@ export function Filters(props: Props) {
     <>
       {/* Desktop */}
       <aside className="hidden lg:block" aria-label="Filteri">
-        <form method="get" action={pathname} onSubmit={onSubmit} className="sticky top-24">
+        <form method="get" action={pathname} onSubmit={onSubmit} className="sticky top-24 rounded-md border border-line bg-surface p-5">
           <FilterFields {...props} idPrefix="d" />
           <div className="mt-6 flex gap-2">
             <button type="submit" className="btn btn-dark flex-1">Prikaži vozila</button>
             {props.activeCount > 0 && (
-              <a href={pathname} className="btn btn-outline">Očisti</a>
+              <a href={pathname} className="btn btn-outline px-3" aria-label="Resetiraj filtere" title="Resetiraj filtere">
+                <RotateCcw className="size-4" aria-hidden="true" />
+              </a>
             )}
           </div>
         </form>
@@ -188,12 +208,15 @@ export function Filters(props: Props) {
               </div>
               <div className="flex-1 overflow-y-auto overscroll-contain px-4 py-5">
                 <FilterFields {...props} idPrefix="m" />
-              </div>
-              <div className="flex gap-2 border-t border-line bg-surface px-4 py-3" style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}>
                 {props.activeCount > 0 && (
-                  <a href={pathname} className="btn btn-outline">Očisti sve</a>
+                  <a href={pathname} className="btn btn-outline mt-6 w-full">
+                    <RotateCcw className="size-4" aria-hidden="true" />
+                    Resetiraj filtere
+                  </a>
                 )}
-                <button type="submit" className="btn btn-primary flex-1">Prikaži vozila</button>
+              </div>
+              <div className="border-t border-line bg-surface px-4 py-3" style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}>
+                <button type="submit" className="btn btn-primary w-full">Prikaži vozila</button>
               </div>
             </form>
           </div>

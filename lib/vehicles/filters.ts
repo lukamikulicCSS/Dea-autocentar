@@ -33,6 +33,7 @@ export type VehicleFilters = {
   cijenaDo?: number;
   godinaOd?: number;
   godinaDo?: number;
+  kmOd?: number;
   kmDo?: number;
   sort: Sort;
   stranica: number;
@@ -84,6 +85,7 @@ export function parseFilters(params: RawParams): VehicleFilters {
     cijenaDo: int(first(params.cijenaDo), 0, 100_000_000),
     godinaOd: int(first(params.godinaOd), 1900, 2100),
     godinaDo: int(first(params.godinaDo), 1900, 2100),
+    kmOd: int(first(params.kmOd), 0, 5_000_000),
     kmDo: int(first(params.kmDo), 0, 5_000_000),
     sort: isOneOf(SORTS, sort) ? sort : "preporuceno",
     stranica: int(first(params.stranica), 1, 1000) ?? 1,
@@ -104,6 +106,7 @@ export function filtersToSearch(f: Partial<VehicleFilters>): string {
     ["cijenaDo", f.cijenaDo],
     ["godinaOd", f.godinaOd],
     ["godinaDo", f.godinaDo],
+    ["kmOd", f.kmOd],
     ["kmDo", f.kmDo],
     ["sort", f.sort && f.sort !== "preporuceno" ? f.sort : undefined],
     ["stranica", f.stranica && f.stranica > 1 ? f.stranica : undefined],
@@ -125,6 +128,7 @@ export function activeFilterCount(f: VehicleFilters): number {
     f.cijenaDo,
     f.godinaOd,
     f.godinaDo,
+    f.kmOd,
     f.kmDo,
   ].filter((v) => v !== undefined).length;
 }

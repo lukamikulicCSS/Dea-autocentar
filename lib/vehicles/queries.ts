@@ -106,6 +106,7 @@ export async function searchVehicles(
   if (filters.cijenaDo !== undefined) query = query.lte("price_bam_minor", filters.cijenaDo * 100);
   if (filters.godinaOd !== undefined) query = query.gte("year", filters.godinaOd);
   if (filters.godinaDo !== undefined) query = query.lte("year", filters.godinaDo);
+  if (filters.kmOd !== undefined) query = query.gte("mileage_km", filters.kmOd);
   if (filters.kmDo !== undefined) query = query.lte("mileage_km", filters.kmDo);
   if (filters.q) {
     // Svaka riječ mora se pojaviti u nazivu, marki, modelu ili izvedbi.

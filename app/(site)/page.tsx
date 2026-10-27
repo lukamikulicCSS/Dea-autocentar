@@ -31,15 +31,34 @@ export default async function HomePage() {
       {/* HERO — pravi salon DEA, jedini orkestrirani pokret na stranici */}
       <section className="relative isolate overflow-hidden bg-asphalt text-white" aria-labelledby="hero-naslov">
         <div className="absolute inset-0 -z-10 lg:left-[42%]">
-          <Image
-            src="/images/salon-audi-r8.jpg"
-            alt="Audi R8 u salonu Auto Centra DEA pod šesterokutnim svjetlima"
-            fill
-            priority
-            fetchPriority="high"
-            sizes="(min-width: 1024px) 58vw, 100vw"
-            className="hero-image object-cover object-[50%_62%]"
-          />
+          {/* Fotografija + dva animirana sloja iste veličine (uvijek se poklapaju s autom) */}
+          <div className="hero-image absolute inset-0">
+            <Image
+              src="/images/hero-porsche-911.jpg"
+              alt="Porsche 911 obasjan svjetlosnim tragovima"
+              fill
+              priority
+              fetchPriority="high"
+              sizes="(min-width: 1024px) 58vw, 100vw"
+              className="object-cover object-[65%_50%] lg:object-[40%_55%]"
+            />
+            <Image
+              src="/images/hero-porsche-911-tragovi.jpg"
+              alt=""
+              aria-hidden="true"
+              fill
+              sizes="(min-width: 1024px) 58vw, 100vw"
+              className="hero-streaks object-cover object-[65%_50%] lg:object-[40%_55%]"
+            />
+            <Image
+              src="/images/hero-porsche-911-svjetla.jpg"
+              alt=""
+              aria-hidden="true"
+              fill
+              sizes="(min-width: 1024px) 58vw, 100vw"
+              className="hero-lights object-cover object-[65%_50%] lg:object-[40%_55%]"
+            />
+          </div>
           {/* Gradijent za čitljivost teksta preko fotografije */}
           <div className="absolute inset-0 bg-gradient-to-t from-asphalt via-asphalt/70 to-asphalt/10 lg:bg-gradient-to-r lg:from-asphalt lg:via-asphalt/25 lg:to-transparent" />
         </div>
