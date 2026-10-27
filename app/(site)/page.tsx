@@ -30,7 +30,8 @@ export default async function HomePage() {
     <>
       {/* HERO — pravi salon DEA, jedini orkestrirani pokret na stranici */}
       <section className="relative isolate overflow-hidden bg-asphalt text-white" aria-labelledby="hero-naslov">
-        <div className="absolute inset-0 -z-10 lg:left-[42%]">
+        {/* Mobitel: auto gore, cijelo i veliko; tekst ispod. Desktop: fotografija desno, tekst lijevo. */}
+        <div className="absolute inset-x-0 top-0 -z-10 aspect-[13/12] sm:aspect-[16/10] lg:inset-y-0 lg:left-[42%] lg:aspect-auto">
           {/* Fotografija + dva animirana sloja iste veličine (uvijek se poklapaju s autom) */}
           <div className="hero-image absolute inset-0">
             <Image
@@ -40,7 +41,7 @@ export default async function HomePage() {
               priority
               fetchPriority="high"
               sizes="(min-width: 1024px) 58vw, 100vw"
-              className="object-cover object-[65%_50%] lg:object-[40%_55%]"
+              className="object-cover object-[38%_52%] lg:object-[40%_55%]"
             />
             <Image
               src="/images/hero-porsche-911-tragovi.jpg"
@@ -48,7 +49,7 @@ export default async function HomePage() {
               aria-hidden="true"
               fill
               sizes="(min-width: 1024px) 58vw, 100vw"
-              className="hero-streaks object-cover object-[65%_50%] lg:object-[40%_55%]"
+              className="hero-streaks object-cover object-[38%_52%] lg:object-[40%_55%]"
             />
             <Image
               src="/images/hero-porsche-911-svjetla.jpg"
@@ -56,14 +57,14 @@ export default async function HomePage() {
               aria-hidden="true"
               fill
               sizes="(min-width: 1024px) 58vw, 100vw"
-              className="hero-lights object-cover object-[65%_50%] lg:object-[40%_55%]"
+              className="hero-lights object-cover object-[38%_52%] lg:object-[40%_55%]"
             />
           </div>
           {/* Gradijent za čitljivost teksta preko fotografije */}
-          <div className="absolute inset-0 bg-gradient-to-t from-asphalt via-asphalt/70 to-asphalt/10 lg:bg-gradient-to-r lg:from-asphalt lg:via-asphalt/25 lg:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-asphalt from-5% via-transparent via-45% to-transparent lg:bg-gradient-to-r lg:from-asphalt lg:from-0% lg:via-asphalt/25 lg:via-50% lg:to-transparent" />
         </div>
 
-        <div className="wrap flex min-h-[78svh] flex-col justify-end pb-10 pt-40 lg:min-h-[640px] lg:justify-center lg:py-24">
+        <div className="wrap flex flex-col justify-end pb-10 pt-[calc(92vw-64px)] sm:pt-[calc(62.5vw-72px)] lg:min-h-[640px] lg:justify-center lg:py-24">
           <div className="hero-text max-w-xl">
             <span aria-hidden="true" className="hero-slash mb-6 block h-1 w-16 -skew-x-[28deg] bg-red" />
             <h1 id="hero-naslov" className="text-[2.5rem] leading-[1.02] sm:text-[3.25rem] lg:text-[3.75rem]" style={{ fontStretch: "125%" }}>
