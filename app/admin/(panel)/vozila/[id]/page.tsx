@@ -50,7 +50,7 @@ export default async function EditVehiclePage({ params, searchParams }: PageProp
 
       <div className="mb-5 flex flex-wrap items-center gap-2 text-sm">
         <StatusBadge status={vehicle.status} />
-        <span className={`rounded-sm px-2 py-1 text-xs font-semibold ${vehicle.is_published ? "bg-[#e9f3ee] text-[#14532f]" : "border border-line text-ink-muted"}`}>
+        <span className={`rounded-sm px-2 py-1 text-xs font-semibold ${vehicle.is_published ? "bg-[#e9f3ee] text-[#14532f] dark:bg-status-available/15 dark:text-[#8fd8ae]" : "border border-line text-ink-muted"}`}>
           {vehicle.is_published ? "Objavljeno" : "Nacrt — nije vidljivo kupcima"}
         </span>
         <span className="text-ink-muted">Adresa oglasa: /vozila/{vehicle.slug}</span>

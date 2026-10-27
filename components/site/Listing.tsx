@@ -7,7 +7,7 @@ import { FUEL_LABELS, TRANSMISSION_LABELS, type VehicleStatus } from "@/lib/vehi
 import { activeFilterCount, filtersToSearch, type VehicleFilters } from "@/lib/vehicles/filters";
 import type { ListingResult } from "@/lib/vehicles/queries";
 import type { SuggestScope } from "@/lib/vehicles/suggest";
-import { CoverPhoto, photoRatio } from "./CoverPhoto";
+import { CoverPhoto, fitsNaturalFrame, photoRatio } from "./CoverPhoto";
 import { EmptyState } from "./EmptyState";
 import { Filters, SortSelect } from "./Filters";
 import { Pagination } from "./Pagination";
@@ -37,6 +37,7 @@ export function EditorialCard({ vehicle, priority }: { vehicle: Card; priority?:
             alt={vehicleAlt(vehicle, cover, 0)}
             priority={priority}
             sizes="(min-width: 768px) 60vw, 100vw"
+            backdrop={fitsNaturalFrame(cover) ? "md" : "always"}
             className="transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.02]"
           />
         ) : (

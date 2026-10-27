@@ -39,7 +39,9 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   images: {
-    formats: ["image/avif", "image/webp"],
+    // Samo WebP: AVIF se na serveru kodira višestruko sporije (prvo otvaranje nove
+    // fotografije), a dobitak u veličini je mali jer su fotografije već WebP.
+    formats: ["image/webp"],
     deviceSizes: [384, 640, 828, 1080, 1280, 1600, 1920],
     imageSizes: [88, 160, 256, 384],
     qualities: [75],

@@ -64,7 +64,7 @@ export function Gallery({ images, title }: { images: GalleryImage[]; title: stri
 
   if (count === 0) {
     return (
-      <div className="flex aspect-[4/3] items-center justify-center rounded-sm bg-[#e7e7e2] text-ink-muted">
+      <div className="flex aspect-[4/3] items-center justify-center rounded-sm bg-line text-ink-muted">
         <ImageOff className="size-10" aria-hidden="true" />
         <span className="sr-only">Fotografije još nisu dodane</span>
       </div>

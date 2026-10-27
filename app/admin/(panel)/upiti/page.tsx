@@ -79,7 +79,7 @@ export default async function InquiriesPage({ searchParams }: PageProps<"/admin/
         <ul className="divide-y divide-line overflow-hidden rounded-sm border border-line bg-surface">
           {rows.map((r) => (
             <li key={r.id}>
-              <Link href={`/admin/upiti/${r.id}`} className={`grid gap-1 px-4 py-3.5 hover:bg-paper sm:grid-cols-[1fr_auto] sm:items-center ${r.is_read ? "" : "bg-[#fdf6f6]"}`}>
+              <Link href={`/admin/upiti/${r.id}`} className={`grid gap-1 px-4 py-3.5 hover:bg-paper sm:grid-cols-[1fr_auto] sm:items-center ${r.is_read ? "" : "bg-[#fdf6f6] dark:bg-red/10"}`}>
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     {!r.is_read && <span className="size-2 shrink-0 rounded-full bg-red" aria-label="Nepročitano" />}

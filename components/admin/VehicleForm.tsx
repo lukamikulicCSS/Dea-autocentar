@@ -368,7 +368,7 @@ export function VehicleForm({ vehicle }: { vehicle: EditableVehicle | null }) {
       </Section>
 
       {/* Traka s akcijama — uvijek dostupna pri dnu */}
-      <div className="sticky bottom-[calc(62px+env(safe-area-inset-bottom))] z-20 -mx-4 flex flex-wrap items-center gap-2 border-t border-line bg-[#efefeb]/95 px-4 py-3 backdrop-blur-sm sm:mx-0 sm:rounded-sm sm:border lg:bottom-4">
+      <div className="sticky bottom-[calc(62px+env(safe-area-inset-bottom))] z-20 -mx-4 flex flex-wrap items-center gap-2 border-t border-line bg-paper/95 px-4 py-3 backdrop-blur-sm sm:mx-0 sm:rounded-sm sm:border lg:bottom-4">
         {isNew ? (
           <button name="intent" value="save" className="btn btn-primary" disabled={pending}>
             {pending && <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />}

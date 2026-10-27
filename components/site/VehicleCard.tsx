@@ -4,7 +4,7 @@ import { formatArrival, formatKm, formatPrice } from "@/lib/format";
 import { vehicleAlt, vehicleImageUrl } from "@/lib/images";
 import type { VehicleCard as Card } from "@/lib/types";
 import { FUEL_LABELS, TRANSMISSION_LABELS } from "@/lib/vehicles/constants";
-import { CoverPhoto, photoRatio } from "./CoverPhoto";
+import { CoverPhoto, fitsNaturalFrame, photoRatio } from "./CoverPhoto";
 import { StatusBadge } from "./StatusBadge";
 
 export function Specs({ items, className = "" }: { items: (string | null | undefined)[]; className?: string }) {
@@ -49,6 +49,7 @@ export function VehicleCard({
             alt={vehicleAlt(vehicle, cover, 0)}
             sizes={sizes}
             priority={priority}
+            backdrop={!compact && fitsNaturalFrame(cover) ? "sm" : "always"}
             className={`transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.025] ${
               vehicle.status === "sold" ? "grayscale-[35%]" : ""
             }`}

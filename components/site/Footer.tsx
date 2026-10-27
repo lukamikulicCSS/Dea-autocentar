@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Clock, LockKeyhole, Mail, MapPin, Phone } from "lucide-react";
+import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { fullAddress, mapsHref, openingHours } from "@/lib/contact";
 import { phoneHref } from "@/lib/format";
 import type { SiteSettings } from "@/lib/types";
@@ -88,7 +88,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
       <div className="border-t border-line-dark">
         <div className="wrap flex flex-col gap-2 py-5 text-[0.8125rem] sm:flex-row sm:items-center sm:justify-between">
           <p>© {year} {settings.business_name}</p>
-         <div className="flex items-center gap-5">
+          <div className="flex items-center gap-5">
             <Link className="hover:text-white" href="/privatnost">Privatnost i kolačići</Link>
             <Link className="text-fog/60 hover:text-white" href="/admin">Prijava za osoblje</Link>
           </div>

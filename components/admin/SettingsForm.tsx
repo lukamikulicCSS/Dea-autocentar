@@ -133,7 +133,7 @@ export function SettingsForm({ settings, notificationEmails }: { settings: SiteS
         </div>
       </Group>
 
-      <div className="sticky bottom-[calc(62px+env(safe-area-inset-bottom))] z-20 -mx-4 border-t border-line bg-[#efefeb]/95 px-4 py-3 backdrop-blur-sm sm:mx-0 sm:rounded-sm sm:border lg:bottom-4">
+      <div className="sticky bottom-[calc(62px+env(safe-area-inset-bottom))] z-20 -mx-4 border-t border-line bg-paper/95 px-4 py-3 backdrop-blur-sm sm:mx-0 sm:rounded-sm sm:border lg:bottom-4">
         <button className="btn btn-primary" disabled={pending}>
           {pending && <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />}
           Spremi postavke

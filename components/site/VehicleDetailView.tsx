@@ -95,13 +95,13 @@ export function VehicleDetailView({
             {sold ? "Prodano" : formatPrice(v)}
           </p>
           {arrival && (
-            <p className="mt-4 flex items-start gap-2 rounded-sm bg-[#e8eef3] px-3 py-2.5 text-[0.9375rem] text-steel">
+            <p className="mt-4 flex items-start gap-2 rounded-sm bg-[#e8eef3] dark:bg-steel/20 dark:text-steel-light px-3 py-2.5 text-[0.9375rem] text-steel">
               <CalendarClock className="mt-0.5 size-4 shrink-0" aria-hidden="true" />
               <span>{arrival}. Datum je okviran i nije zajamčen.</span>
             </p>
           )}
           {v.status === "reserved" && (
-            <p className="mt-4 rounded-sm bg-[#f6efe4] px-3 py-2.5 text-[0.9375rem] text-status-reserved">
+            <p className="mt-4 rounded-sm bg-[#f6efe4] dark:bg-status-reserved/20 dark:text-[#f0b766] px-3 py-2.5 text-[0.9375rem] text-status-reserved">
               Vozilo je trenutno rezervirano. Pošaljite upit i javit ćemo vam ako se ponovno oslobodi.
             </p>
           )}

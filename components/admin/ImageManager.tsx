@@ -226,7 +226,7 @@ export function ImageManager({
             addFiles(e.dataTransfer.files);
           }
         }}
-        className={`flex flex-col items-center gap-3 rounded-sm border-2 border-dashed p-6 text-center transition-colors ${dragOver ? "border-red bg-[#fbecec]" : "border-line bg-paper"}`}
+        className={`flex flex-col items-center gap-3 rounded-sm border-2 border-dashed p-6 text-center transition-colors ${dragOver ? "border-red bg-[#fbecec] dark:bg-red/10" : "border-line bg-paper"}`}
       >
         <div className="flex flex-wrap justify-center gap-2">
           <button type="button" onClick={() => fileInput.current?.click()} className="btn btn-dark">

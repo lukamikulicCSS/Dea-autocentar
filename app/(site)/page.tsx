@@ -190,17 +190,19 @@ export default async function HomePage() {
       )}
 
       {/* ZAŠTO DEA — samo tvrdnje koje salon sam navodi */}
-      <section className="border-y border-line bg-surface" aria-labelledby="zasto-naslov">
-        <div className="wrap grid gap-10 py-16 sm:py-20 lg:grid-cols-[1fr_1.1fr] lg:gap-16">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-sm sm:aspect-square lg:aspect-auto lg:min-h-[480px]">
-            <Image
-              src="/images/salon-dea-vanjski.jpg"
-              alt="Ferrari ispred salona Auto Centra DEA u Zenici"
-              fill
-              sizes="(min-width: 1024px) 45vw, 100vw"
-              className="object-cover object-[50%_42%]"
-            />
-          </div>
+      <section className="relative isolate overflow-hidden border-y border-line bg-surface" aria-labelledby="zasto-naslov">
+        {/* Fotografija bez okvira: ide do ruba ekrana i postupno se stapa s pozadinom */}
+        <div className="blend-photo absolute inset-x-0 top-0 -z-10 h-[460px] sm:h-[600px] lg:inset-y-0 lg:right-auto lg:h-auto lg:w-[56%]">
+          <Image
+            src="/images/salon-dea-vanjski.jpg"
+            alt="Ferrari ispred salona Auto Centra DEA u Zenici"
+            fill
+            sizes="(min-width: 1024px) 56vw, 100vw"
+            className="object-cover object-[50%_42%] lg:object-[50%_38%] dark:brightness-[0.88]"
+          />
+        </div>
+        <div className="wrap grid pb-16 pt-[400px] sm:pb-20 sm:pt-[520px] lg:min-h-[720px] lg:grid-cols-[1fr_1.1fr] lg:gap-16 lg:py-20">
+          <div aria-hidden="true" className="hidden lg:block" />
           <div className="flex flex-col justify-center">
             <span aria-hidden="true" className="mb-4 block h-[3px] w-10 -skew-x-[28deg] bg-red" />
             <h2 id="zasto-naslov" className="text-[1.75rem] sm:text-[2.125rem]">Kupnja bez nagađanja</h2>

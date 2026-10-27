@@ -416,6 +416,23 @@
   transform-origin: left center;
   animation: slash 700ms var(--ease-out-quart) 420ms both;
 }
+/* Fotografija koja se stapa s pozadinom sekcije (radi u svijetloj i tamnoj temi) */
+.blend-photo {
+  --fade: linear-gradient(to bottom, #000 0%, #000 55%, transparent 100%);
+  mask-image: var(--fade);
+  -webkit-mask-image: var(--fade);
+}
+@media (min-width: 1024px) {
+  .blend-photo {
+    --fade-x: linear-gradient(to right, #000 0%, #000 50%, transparent 94%);
+    --fade-y: linear-gradient(to bottom, transparent 0%, #000 6%, #000 88%, transparent 100%);
+    mask-image: var(--fade-x), var(--fade-y);
+    -webkit-mask-image: var(--fade-x), var(--fade-y);
+    mask-composite: intersect;
+    -webkit-mask-composite: source-in;
+  }
+}
+
 /* Naslovna: impulsi svjetla putuju kroz tragove iza auta (prema natrag, kao u vožnji) */
 @keyframes streak-sweep {
   from {

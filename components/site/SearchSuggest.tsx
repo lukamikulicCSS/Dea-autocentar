@@ -4,17 +4,23 @@ import { useId, useRef, useState } from "react";
 import { Search } from "lucide-react";
 import { suggest, vehiclesLabel, type IndexRow, type SuggestScope, type Suggestion } from "@/lib/vehicles/suggest";
 
-/** Sažetak ponude dijele sva polja na stranici i učitava se samo jednom. */
-let indexPromise: Promise<IndexRow[]> | null = null;
-function loadIndex(): Promise<IndexRow[]> {
-  indexPromise ??= fetch("/api/marke")
+/**
+ * Sažetak ponude dijele sva polja na stranici. Javni popis učitava se jednom;
+ * popis u administraciji osvježava se nakon 30 s (da se vide upravo dodana vozila).
+ */
+const cache = new Map<string, { at: number; promise: Promise<IndexRow[]> }>();
+function loadIndex(source: string, maxAgeMs: number): Promise<IndexRow[]> {
+  const hit = cache.get(source);
+  if (hit && Date.now() - hit.at < maxAgeMs) return hit.promise;
+  const promise = fetch(source, { credentials: "same-origin" })
     .then((r) => (r.ok ? r.json() : { rows: [] }))
     .then((d: { rows?: IndexRow[] }) => d.rows ?? [])
     .catch(() => {
-      indexPromise = null; // pokušaj ponovno pri sljedećem fokusu
+      cache.delete(source); // pokušaj ponovno pri sljedećem fokusu
       return [];
     });
-  return indexPromise;
+  cache.set(source, { at: Date.now(), promise });
+  return promise;
 }
 
 /**
@@ -30,6 +36,7 @@ export function SearchSuggest({
   scope,
   tone = "light",
   className = "",
+  source = "/api/marke",
 }: {
   id: string;
   defaultValue?: string;
@@ -37,7 +44,10 @@ export function SearchSuggest({
   scope: SuggestScope;
   tone?: "light" | "dark";
   className?: string;
+  /** "/api/admin/marke" u administraciji (sva vozila, i nacrti) */
+  source?: "/api/marke" | "/api/admin/marke";
 }) {
+  const maxAge = source === "/api/marke" ? Infinity : 30_000;
   const inputRef = useRef<HTMLInputElement>(null);
   const rowsRef = useRef<IndexRow[] | null>(null);
   const [items, setItems] = useState<Suggestion[]>([]);
@@ -49,7 +59,7 @@ export function SearchSuggest({
   function update(value: string) {
     const rows = rowsRef.current;
     if (!rows) {
-      void loadIndex().then((r) => {
+      void loadIndex(source, maxAge).then((r) => {
         rowsRef.current = r;
         if (inputRef.current === document.activeElement) update(inputRef.current?.value ?? "");
       });
@@ -108,7 +118,7 @@ export function SearchSuggest({
         aria-controls={listId}
         aria-activedescendant={open && active >= 0 ? optionId(active) : undefined}
         onFocus={(e) => {
-          void loadIndex().then((r) => (rowsRef.current = r));
+          void loadIndex(source, maxAge).then((r) => (rowsRef.current = r));
           if (e.currentTarget.value) update(e.currentTarget.value);
         }}
         onChange={(e) => update(e.currentTarget.value)}

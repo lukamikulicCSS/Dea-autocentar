@@ -6,6 +6,7 @@ import { AdminPageTitle } from "@/components/admin/AdminPageTitle";
 import { Notice } from "@/components/admin/Notice";
 import { VehicleQuickControls } from "@/components/admin/VehicleQuickControls";
 import { Pagination } from "@/components/site/Pagination";
+import { SearchSuggest } from "@/components/site/SearchSuggest";
 import { StatusBadge } from "@/components/site/StatusBadge";
 import { requireAdmin } from "@/lib/auth";
 import { formatDateTime, formatKm, formatPrice } from "@/lib/format";
@@ -96,8 +97,15 @@ export default async function AdminVehiclesPage({ searchParams }: PageProps<"/ad
       <form method="get" className="mb-6 grid gap-2 rounded-sm border border-line bg-surface p-3 sm:grid-cols-[1.6fr_1fr_1fr_1fr_1fr_auto]">
         <div className="relative">
           <label htmlFor="aq" className="sr-only">Pretraga</label>
-          <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-ink-muted" aria-hidden="true" />
-          <input id="aq" name="q" type="search" defaultValue={q} placeholder="Naziv, marka, šifra…" className="field pl-9" />
+          <Search className="pointer-events-none absolute left-3 top-1/2 z-10 size-4 -translate-y-1/2 text-ink-muted" aria-hidden="true" />
+          <SearchSuggest
+            id="aq"
+            source="/api/admin/marke"
+            defaultValue={q}
+            placeholder="Naziv, marka, šifra…"
+            scope={{ statuses: status ? [status] : VEHICLE_STATUSES.filter((s) => s !== "archived"), category: kategorija }}
+            className="field pl-9"
+          />
         </div>
         <select name="status" defaultValue={status ?? ""} className="field" aria-label="Status">
           <option value="">Svi statusi (bez arhive)</option>
@@ -133,7 +141,7 @@ export default async function AdminVehiclesPage({ searchParams }: PageProps<"/ad
             const cover = v.vehicle_images[0];
             return (
               <li key={v.id} className="grid gap-4 rounded-sm border border-line bg-surface p-3 sm:p-4 md:grid-cols-[120px_1fr_auto] md:items-center">
-                <Link href={`/admin/vozila/${v.id}`} className="relative block aspect-[4/3] w-full overflow-hidden rounded-sm bg-[#e7e7e2] md:w-[120px]" tabIndex={-1} aria-hidden="true">
+                <Link href={`/admin/vozila/${v.id}`} className="relative block aspect-[4/3] w-full overflow-hidden rounded-sm bg-line md:w-[120px]" tabIndex={-1} aria-hidden="true">
                   {cover ? (
                     <Image src={vehicleImageUrl(cover.storage_path)} alt="" fill sizes="(min-width: 768px) 120px, 100vw" className="object-cover" />
                   ) : (
@@ -144,7 +152,7 @@ export default async function AdminVehiclesPage({ searchParams }: PageProps<"/ad
                   <div className="flex flex-wrap items-center gap-2">
                     <StatusBadge status={v.status} />
                     {v.category === "premium" && <span className="rounded-sm border border-line px-1.5 py-0.5 text-xs font-semibold">Premium</span>}
-                    {!cover && <span className="rounded-sm bg-[#f6efe4] px-1.5 py-0.5 text-xs text-status-reserved">Bez fotografija</span>}
+                    {!cover && <span className="rounded-sm bg-[#f6efe4] dark:bg-status-reserved/20 px-1.5 py-0.5 text-xs text-status-reserved">Bez fotografija</span>}
                   </div>
                   <Link href={`/admin/vozila/${v.id}`} className="mt-1.5 block truncate text-[1.0625rem] font-semibold hover:underline">{v.title}</Link>
                   <p className="tabular mt-0.5 text-sm text-ink-muted">
