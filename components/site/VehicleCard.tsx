@@ -1,10 +1,10 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ImageOff } from "lucide-react";
 import { formatArrival, formatKm, formatPrice } from "@/lib/format";
 import { vehicleAlt, vehicleImageUrl } from "@/lib/images";
 import type { VehicleCard as Card } from "@/lib/types";
 import { FUEL_LABELS, TRANSMISSION_LABELS } from "@/lib/vehicles/constants";
+import { CoverPhoto, photoRatio } from "./CoverPhoto";
 import { StatusBadge } from "./StatusBadge";
 
 export function Specs({ items, className = "" }: { items: (string | null | undefined)[]; className?: string }) {
@@ -25,26 +25,31 @@ export function VehicleCard({
   priority = false,
   sizes = "(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw",
   tone = "light",
+  compact = false,
 }: {
   vehicle: Card;
   priority?: boolean;
   sizes?: string;
   tone?: "light" | "dark";
+  /** Više kartica u retku i na mobitelu → jednak okvir 4:3 (inače mobitel prati omjer fotografije) */
+  compact?: boolean;
 }) {
   const cover = vehicle.vehicle_images[0];
   const arrival = vehicle.status === "coming_soon" ? formatArrival(vehicle) : null;
   const dark = tone === "dark";
   return (
     <article className="group relative">
-      <div className={`relative aspect-[4/3] overflow-hidden rounded-sm ${dark ? "bg-graphite" : "bg-[#e7e7e2]"}`}>
+      <div
+        className={`relative overflow-hidden rounded-sm ${compact ? "aspect-[4/3]" : "aspect-[var(--ar)] sm:aspect-[4/3]"} ${dark ? "bg-graphite" : "bg-asphalt"}`}
+        style={{ "--ar": String(photoRatio(cover)) } as React.CSSProperties}
+      >
         {cover ? (
-          <Image
+          <CoverPhoto
             src={vehicleImageUrl(cover.storage_path)}
             alt={vehicleAlt(vehicle, cover, 0)}
-            fill
             sizes={sizes}
             priority={priority}
-            className={`object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.025] ${
+            className={`transition-transform duration-500 ease-out motion-safe:group-hover:scale-[1.025] ${
               vehicle.status === "sold" ? "grayscale-[35%]" : ""
             }`}
           />

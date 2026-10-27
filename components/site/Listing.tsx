@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { ImageOff } from "lucide-react";
 import { formatArrival, formatKm, formatPower, formatPrice } from "@/lib/format";
@@ -8,6 +7,7 @@ import { FUEL_LABELS, TRANSMISSION_LABELS, type VehicleStatus } from "@/lib/vehi
 import { activeFilterCount, filtersToSearch, type VehicleFilters } from "@/lib/vehicles/filters";
 import type { ListingResult } from "@/lib/vehicles/queries";
 import type { SuggestScope } from "@/lib/vehicles/suggest";
+import { CoverPhoto, photoRatio } from "./CoverPhoto";
 import { EmptyState } from "./EmptyState";
 import { Filters, SortSelect } from "./Filters";
 import { Pagination } from "./Pagination";
@@ -27,15 +27,17 @@ export function EditorialCard({ vehicle, priority }: { vehicle: Card; priority?:
   const cover = vehicle.vehicle_images[0];
   return (
     <article className="group relative grid overflow-hidden rounded-sm bg-asphalt text-white md:grid-cols-[1.5fr_1fr]">
-      <div className="relative aspect-[16/10] md:aspect-auto md:min-h-[340px]">
+      <div
+        className="relative aspect-[var(--ar)] overflow-hidden md:aspect-auto md:min-h-[380px]"
+        style={{ "--ar": String(photoRatio(cover)) } as React.CSSProperties}
+      >
         {cover ? (
-          <Image
+          <CoverPhoto
             src={vehicleImageUrl(cover.storage_path)}
             alt={vehicleAlt(vehicle, cover, 0)}
-            fill
             priority={priority}
             sizes="(min-width: 768px) 60vw, 100vw"
-            className="object-cover transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.02]"
+            className="transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.02]"
           />
         ) : (
           <div className="flex h-full items-center justify-center bg-graphite text-fog">

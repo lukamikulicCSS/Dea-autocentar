@@ -235,7 +235,7 @@ export default async function HomePage() {
           <ul className="grid grid-cols-2 gap-x-4 gap-y-8 lg:grid-cols-4">
             {sold.map((v) => (
               <li key={v.id}>
-                <VehicleCard vehicle={v} sizes="(min-width: 1024px) 25vw, 50vw" />
+                <VehicleCard vehicle={v} sizes="(min-width: 1024px) 25vw, 50vw" compact />
               </li>
             ))}
           </ul>
