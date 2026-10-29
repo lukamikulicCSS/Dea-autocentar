@@ -3,6 +3,7 @@ import { fullAddress, mapsHref, openingHours, viberHref, whatsappHref } from "@/
 import { phoneHref } from "@/lib/format";
 import type { SiteSettings } from "@/lib/types";
 import { FacebookIcon, InstagramIcon } from "./SocialIcons";
+import { LocationMap } from "./LocationMap";
 
 /** Kontakt podaci — prikazuju se samo podaci upisani u postavkama. */
 export function ContactDetails({ settings, tone = "dark" }: { settings: SiteSettings; tone?: "light" | "dark" }) {
@@ -28,7 +29,10 @@ export function ContactDetails({ settings, tone = "dark" }: { settings: SiteSett
         {address && (
           <div className="flex gap-3">
             <dt><MapPin className={`mt-0.5 size-4 ${muted}`} aria-hidden="true" /><span className="sr-only">Adresa</span></dt>
-            <dd>{address}</dd>
+            <dd className="min-w-0 flex-1">
+              {address}
+              <LocationMap query={`${settings.business_name}, ${address}`} label={address} href={directions} dark={dark} />
+            </dd>
           </div>
         )}
         {hours && (

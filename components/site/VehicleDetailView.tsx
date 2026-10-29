@@ -76,7 +76,7 @@ export function VehicleDetailView({
         </nav>
       </div>
 
-      <div className="wrap grid gap-8 pb-8 pt-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(340px,1fr)] lg:gap-12">
+      <div className="wrap grid gap-8 pb-8 pt-5 lg:grid-cols-[minmax(0,1.55fr)_minmax(21.25rem,1fr)] lg:gap-12">
         <div className="min-w-0">
           <Gallery images={images} title={v.title} />
         </div>
@@ -147,29 +147,9 @@ export function VehicleDetailView({
         </dl>
       </div>
 
-      <div className="wrap grid gap-12 py-12 lg:grid-cols-[minmax(0,1.55fr)_minmax(340px,1fr)] lg:gap-12">
+      <div className="wrap grid gap-12 py-12 lg:grid-cols-[minmax(0,1.55fr)_minmax(21.25rem,1fr)] lg:gap-12">
         <div className="min-w-0 space-y-12">
-          {v.description && (
-            <section aria-labelledby="opis">
-              <h2 id="opis" className="text-2xl">Opis vozila</h2>
-              <div className="mt-4 max-w-[68ch] whitespace-pre-line text-[1.0625rem] leading-relaxed">{v.description}</div>
-            </section>
-          )}
-
-          {v.equipment.length > 0 && (
-            <section aria-labelledby="oprema">
-              <h2 id="oprema" className="text-2xl">Oprema</h2>
-              <ul className="mt-5 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
-                {v.equipment.map((item) => (
-                  <li key={item} className="flex gap-2.5 text-[0.9375rem]">
-                    <Check className="mt-1 size-4 shrink-0 text-steel" aria-hidden="true" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
-
+          {/* Tehnički podaci odmah ispod oglasa, prije opisa */}
           <section aria-labelledby="specifikacije">
             <h2 id="specifikacije" className="text-2xl">Tehnički podaci</h2>
             <dl className="mt-4 border-t border-line">
@@ -191,6 +171,28 @@ export function VehicleDetailView({
               <SpecRow label="Šifra oglasa" value={v.stock_ref} />
             </dl>
           </section>
+
+          {v.description && (
+            <section aria-labelledby="opis">
+              <h2 id="opis" className="text-2xl">Opis vozila</h2>
+              <div className="mt-4 max-w-[68ch] whitespace-pre-line text-[1.0625rem] leading-relaxed">{v.description}</div>
+            </section>
+          )}
+
+          {v.equipment.length > 0 && (
+            <section aria-labelledby="oprema">
+              <h2 id="oprema" className="text-2xl">Oprema</h2>
+              <ul className="mt-5 grid gap-x-8 gap-y-2.5 sm:grid-cols-2">
+                {v.equipment.map((item) => (
+                  <li key={item} className="flex gap-2.5 text-[0.9375rem]">
+                    <Check className="mt-1 size-4 shrink-0 text-steel" aria-hidden="true" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
+
         </div>
 
         {canInquire && (
@@ -216,7 +218,7 @@ export function VehicleDetailView({
       {/* Mobilna traka s akcijama — iznad donje navigacije, ne prekriva sadržaj */}
       {canInquire && (
         <>
-          <div className="h-[68px] lg:hidden" aria-hidden="true" />
+          <div className="h-[4.25rem] lg:hidden" aria-hidden="true" />
           <div
             className="fixed inset-x-0 z-30 flex gap-2 border-t border-line bg-paper/95 px-4 py-2.5 backdrop-blur-sm lg:hidden"
             style={{ bottom: "var(--bottom-nav-h)" }}

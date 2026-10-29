@@ -13,7 +13,7 @@ export function Header({ settings }: { settings: SiteSettings }) {
       </a>
       <div className="wrap flex h-16 items-center justify-between gap-6">
         <Link href="/" className="shrink-0" aria-label="Auto Centar DEA – početna">
-          <Logo variant="light" priority className="w-[92px] lg:w-[104px]" />
+          <Logo variant="light" priority className="w-[5.75rem] lg:w-[6.5rem]" />
         </Link>
 
         <nav aria-label="Glavna navigacija" className="hidden flex-1 justify-center lg:flex">

@@ -15,7 +15,7 @@ export function Footer({ settings }: { settings: SiteSettings }) {
     <footer className="bg-asphalt text-fog">
       <div className="wrap grid gap-10 py-14 md:grid-cols-[1.2fr_1fr_1fr]">
         <div>
-          <Logo variant="light" className="w-[120px]" />
+          <Logo variant="light" className="w-[7.5rem]" />
           <p className="mt-5 max-w-sm text-[0.9375rem] leading-relaxed">
             {settings.business_name}
             {settings.city ? `, ${settings.city}` : ""}. Provjerena vozila, probna vožnja i zamjena uz besplatnu procjenu.

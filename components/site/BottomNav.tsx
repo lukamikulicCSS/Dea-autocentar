@@ -22,7 +22,7 @@ export function BottomNav() {
       className="fixed inset-x-0 bottom-0 z-40 border-t border-line-dark bg-asphalt/95 backdrop-blur-sm lg:hidden"
       style={{ paddingBottom: "env(safe-area-inset-bottom)" }}
     >
-      <ul className="grid h-[62px] grid-cols-5">
+      <ul className="grid h-[3.875rem] grid-cols-5">
         {items.map((item) => {
           const Icon = ICONS[item.href as keyof typeof ICONS];
           const active = isActive(pathname, item.href);

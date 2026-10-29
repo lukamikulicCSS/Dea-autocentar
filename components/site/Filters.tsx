@@ -55,7 +55,7 @@ function FilterFields({ filters, statuses, showCategory = true, showStatus = tru
     <div className="space-y-5">
       <div>
         <label htmlFor={id("q")} className="label">Marka, model ili ključna riječ</label>
-        <SearchSuggest id={id("q")} defaultValue={filters.q} placeholder="npr. BMW, Audi A6" scope={suggestScope} className="field" />
+        <SearchSuggest id={id("q")} defaultValue={filters.q} placeholder="npr. Porsche" scope={suggestScope} className="field" />
       </div>
 
       {showCategory && (

@@ -64,10 +64,10 @@ export default async function HomePage() {
           <div className="absolute inset-0 bg-gradient-to-t from-asphalt from-5% via-transparent via-45% to-transparent lg:bg-gradient-to-r lg:from-asphalt lg:from-0% lg:via-asphalt/25 lg:via-50% lg:to-transparent" />
         </div>
 
-        <div className="wrap flex flex-col justify-end pb-10 pt-[calc(92vw-64px)] sm:pt-[calc(62.5vw-72px)] lg:min-h-[640px] lg:justify-center lg:py-24">
+        <div className="wrap flex flex-col justify-end pb-10 pt-[calc(92vw-64px)] sm:pt-[calc(62.5vw-72px)] lg:min-h-[min(40rem,calc(100svh-4rem))] lg:justify-center lg:py-24">
           <div className="hero-text max-w-xl">
             <span aria-hidden="true" className="hero-slash mb-6 block h-1 w-16 -skew-x-[28deg] bg-red" />
-            <h1 id="hero-naslov" className="text-[2.5rem] leading-[1.02] sm:text-[3.25rem] lg:text-[3.75rem]" style={{ fontStretch: "125%" }}>
+            <h1 id="hero-naslov" className="text-[clamp(2.25rem,1.5rem+3vw,3.75rem)] leading-[1.02]" style={{ fontStretch: "125%" }}>
               {heroTitle}
             </h1>
             <p className="mt-5 max-w-md text-[1.0625rem] leading-relaxed text-[#d4d7da]">{heroSubtitle}</p>
@@ -93,7 +93,7 @@ export default async function HomePage() {
             <label htmlFor="hs-q" className="label text-fog">Marka ili model</label>
             <SearchSuggest
               id="hs-q"
-              placeholder="npr. BMW, Golf, X5"
+              placeholder="npr. Porsche"
               tone="dark"
               scope={{ statuses: mainListingStatuses(settings) }}
               className="field border-line-dark bg-asphalt text-white placeholder:text-[#7d838a] focus:border-white focus:shadow-[0_0_0_1px_#fff]"
@@ -193,7 +193,7 @@ export default async function HomePage() {
       {/* ZAŠTO DEA — samo tvrdnje koje salon sam navodi */}
       <section className="relative isolate overflow-hidden border-y border-line bg-surface" aria-labelledby="zasto-naslov">
         {/* Fotografija bez okvira: ide do ruba ekrana i postupno se stapa s pozadinom */}
-        <div className="blend-photo absolute inset-x-0 top-0 -z-10 h-[460px] sm:h-[600px] lg:inset-y-0 lg:right-auto lg:h-auto lg:w-[56%]">
+        <div className="blend-photo absolute inset-x-0 top-0 -z-10 h-[28.75rem] sm:h-[37.5rem] lg:inset-y-0 lg:right-auto lg:h-auto lg:w-[56%]">
           <Image
             src="/images/salon-dea-vanjski.jpg"
             alt="Ferrari ispred salona Auto Centra DEA u Zenici"
@@ -202,11 +202,11 @@ export default async function HomePage() {
             className="object-cover object-[50%_42%] lg:object-[50%_38%] dark:brightness-[0.88]"
           />
         </div>
-        <div className="wrap grid pb-16 pt-[400px] sm:pb-20 sm:pt-[520px] lg:min-h-[720px] lg:grid-cols-[1fr_1.1fr] lg:gap-16 lg:py-20">
+        <div className="wrap grid pb-16 pt-[25rem] sm:pb-20 sm:pt-[32.5rem] lg:min-h-[45rem] lg:grid-cols-[1fr_1.1fr] lg:gap-16 lg:py-20">
           <div aria-hidden="true" className="hidden lg:block" />
           <div className="flex flex-col justify-center">
             <span aria-hidden="true" className="mb-4 block h-[3px] w-10 -skew-x-[28deg] bg-red" />
-            <h2 id="zasto-naslov" className="text-[1.75rem] sm:text-[2.125rem]">Kupnja bez nagađanja</h2>
+            <h2 id="zasto-naslov" className="text-[clamp(1.625rem,1.3rem+1.3vw,2.125rem)]">Kupnja bez nagađanja</h2>
             <p className="mt-3 max-w-lg text-[1.0625rem] text-ink-muted">
               {settings.business_name} vozila prodaje onako kako biste ih i sami htjeli kupiti: pregledana, isprobana i s jasnim papirima.
             </p>
@@ -250,7 +250,7 @@ export default async function HomePage() {
         <div className="wrap grid gap-12 py-16 sm:py-20 lg:grid-cols-2 lg:gap-20">
           <div>
             <span aria-hidden="true" className="mb-4 block h-[3px] w-10 -skew-x-[28deg] bg-red" />
-            <h2 id="kontakt-naslov" className="text-[1.75rem] sm:text-[2.125rem]">Posjetite nas ili pošaljite upit</h2>
+            <h2 id="kontakt-naslov" className="text-[clamp(1.625rem,1.3rem+1.3vw,2.125rem)]">Posjetite nas ili pošaljite upit</h2>
             <div className="mt-8">
               <ContactDetails settings={settings} />
             </div>

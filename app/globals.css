@@ -101,12 +101,13 @@
   }
   @media (max-width: 1023.98px) {
     :root {
-      --bottom-nav-h: calc(62px + env(safe-area-inset-bottom));
+      --bottom-nav-h: calc(3.875rem + env(safe-area-inset-bottom));
     }
   }
 
   html {
     -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
     text-rendering: optimizeLegibility;
   }
   body {
@@ -115,6 +116,8 @@
     font-family: var(--font-sans);
     font-size: 1rem;
     line-height: 1.55;
+    /* Pri većem zoomu ništa ne smije gurnuti stranicu u vodoravno skrolanje (clip ne kvari sticky zaglavlje) */
+    overflow-x: clip;
     -webkit-font-smoothing: antialiased;
   }
   h1,
@@ -145,7 +148,7 @@
 @layer components {
   .wrap {
     width: 100%;
-    max-width: 1280px;
+    max-width: 80rem; /* rem: prati zadanu veličinu fonta u pregledniku */
     margin-inline: auto;
     padding-inline: 1rem;
   }
@@ -173,7 +176,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    min-height: 48px;
+    min-height: 3rem;
     padding: 0 1.25rem;
     border-radius: var(--radius-md);
     font-weight: 600;
@@ -224,7 +227,7 @@
     border-color: #fff;
   }
   .btn-sm {
-    min-height: 40px;
+    min-height: 2.5rem;
     padding: 0 0.875rem;
     font-size: 0.875rem;
   }
@@ -233,7 +236,7 @@
   .field {
     display: block;
     width: 100%;
-    min-height: 48px;
+    min-height: 3rem;
     padding: 0.625rem 0.875rem;
     border: 1px solid var(--color-line);
     border-radius: var(--radius-md);
@@ -532,3 +535,12 @@ dialog.modal::backdrop {
     scroll-behavior: auto !important;
   }
 }
+
+/* Galerija vozila: fotografije klize samo vodoravno, glatko se poravnaju nakon puštanja prsta */
+.gallery-track {
+  will-change: transform;
+}
+.gallery-track.is-settling {
+  transition: transform 320ms var(--ease-out-quart);
+}
+

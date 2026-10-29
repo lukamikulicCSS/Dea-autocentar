@@ -28,7 +28,7 @@ export function EditorialCard({ vehicle, priority }: { vehicle: Card; priority?:
   return (
     <article className="group relative grid overflow-hidden rounded-sm bg-asphalt text-white md:grid-cols-[1.5fr_1fr]">
       <div
-        className="relative aspect-[var(--ar)] overflow-hidden md:aspect-auto md:min-h-[380px]"
+        className="relative aspect-[var(--ar)] overflow-hidden md:aspect-auto md:min-h-[23.75rem]"
         style={{ "--ar": String(photoRatio(cover)) } as React.CSSProperties}
       >
         {cover ? (

@@ -17,7 +17,8 @@ const csp = [
   `img-src 'self' data: blob: ${supabaseOrigin}`,
   "font-src 'self'",
   `connect-src 'self' ${supabaseOrigin} https://challenges.cloudflare.com`,
-  "frame-src https://challenges.cloudflare.com",
+  // Google Maps: mala karta s lokacijom salona u kontakt sekciji
+  "frame-src https://challenges.cloudflare.com https://www.google.com https://maps.google.com",
   "frame-ancestors 'none'",
   "form-action 'self'",
   "base-uri 'self'",
