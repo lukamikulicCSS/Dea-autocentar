@@ -92,7 +92,11 @@ function SwipeTrack({
       onPointerMove={onPointerMove}
       onPointerUp={() => end(true)}
       onPointerCancel={() => end(false)}
-      onLostPointerCapture={() => end(true)}
+            // Na dodir preglednik prst automatski veže za fotografiju; kad ga galerija preuzme,
+      // fotografija "gubi" prst. To NIJE kraj pokreta — reagiramo samo kad ga izgubi sama galerija.
+      onLostPointerCapture={(e) => {
+        if (e.target === e.currentTarget) end(true);
+      }}
       onDragStart={(e) => e.preventDefault()}
     >
       <div
