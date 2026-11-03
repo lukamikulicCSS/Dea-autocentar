@@ -1,4 +1,5 @@
 import { BottomNav } from "@/components/site/BottomNav";
+import { ConsentBanner } from "@/components/site/consent/ConsentBanner";
 import { Footer } from "@/components/site/Footer";
 import { Header } from "@/components/site/Header";
 import { JsonLd } from "@/components/site/JsonLd";
@@ -17,6 +18,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       </main>
       <Footer settings={settings} />
       <BottomNav />
+      <ConsentBanner />
     </div>
   );
 }

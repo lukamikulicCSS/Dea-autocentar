@@ -545,5 +545,10 @@ dialog.modal::backdrop {
 }
 /* Nakon puštanja prsta: kreće brzo pa se nježno usporava do kraja (ease-out quint) */
 .gallery-track.is-settling {
-  transition: transform 480ms cubic-bezier(0.22, 1, 0.36, 1);
+  transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+/* Svaka fotografija je zaseban, izoliran sloj — pomicanje trake ne traži ponovno crtanje susjednih */
+.gallery-slide {
+  contain: layout paint;
+  transform: translateZ(0);
 }

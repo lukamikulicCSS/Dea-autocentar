@@ -1,21 +1,31 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { ChevronLeft, ChevronRight, Expand, ImageOff, X } from "lucide-react";
 
 export type GalleryImage = { src: string; alt: string; width: number | null; height: number | null };
 
-/** Koliko fotografija lijevo i desno od trenutne se učitava unaprijed (nema crnog ekrana pri listanju). */
-const PRELOAD = 2;
+/** Koliko fotografija lijevo i desno od trenutne je spremno unaprijed (učitano i dekodirano). */
+const WINDOW = 3;
 /** Pomak prsta (px) nakon kojeg se odlučuje je li pokret vodoravan ili okomit. */
 const AXIS_LOCK_PX = 8;
 
+/** Je li fotografija i unutar prozora oko trenutne (kružno, jer se listanje vrti ukrug). */
+function inWindow(i: number, index: number, count: number) {
+  const d = Math.abs(i - index);
+  return Math.min(d, count - d) <= WINDOW;
+}
+
 /**
  * Traka koja se pomiče isključivo vodoravno.
- * - touch-action: pan-y → preglednik smije samo okomito pomicati stranicu; kad pokret krene vodoravno,
- *   stranica stoji mirno, a fotografije se pomiču samo lijevo/desno (nema "plesanja" gore-dolje na mobitelu).
- * - Pomak se radi preko transform-a, pa visina okvira nikad ne ovisi o fotografiji.
+ *
+ * Zašto je glatka:
+ *  - za vrijeme povlačenja React se NE renderira — pomak se upisuje izravno u
+ *    transform (jednom po sličici zaslona, requestAnimationFrame), pa nema
+ *    zastoja zbog usklađivanja komponenti;
+ *  - pomiče se samo transform (GPU sloj), ništa što traži ponovni raspored;
+ *  - touch-action: pan-y → okomiti pokret pripada stranici, vodoravni galeriji.
  */
 function SwipeTrack({
   index,
@@ -33,34 +43,45 @@ function SwipeTrack({
   children: React.ReactNode;
 }) {
   const viewportRef = useRef<HTMLDivElement>(null);
-  const gesture = useRef<{ id: number; x: number; y: number; t: number; axis: "x" | "y" | null } | null>(null);
-  const [dragX, setDragXState] = useState(0);
-  const dragXRef = useRef(0);
-  const [dragging, setDragging] = useState(false);
-  const setDragX = (v: number) => {
-    dragXRef.current = v;
-    setDragXState(v);
-  };
+  const trackRef = useRef<HTMLDivElement>(null);
+  const gesture = useRef<{ id: number; x: number; y: number; t: number; axis: "x" | "y" | null; dx: number } | null>(null);
+  const frame = useRef(0);
+  const indexRef = useRef(index);
+  const mounted = useRef(false);
+
+  const apply = useCallback((dx: number, animate: boolean) => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.classList.toggle("is-settling", animate);
+    track.style.transform = `translate3d(calc(${-indexRef.current * 100}% + ${dx}px), 0, 0)`;
+  }, []);
+
+  // Promjena fotografije (strelice, sličice, prst): animirano; prvi prikaz: bez animacije
+  useLayoutEffect(() => {
+    indexRef.current = index;
+    apply(0, mounted.current);
+    mounted.current = true;
+  }, [index, apply]);
+
+  useEffect(() => () => cancelAnimationFrame(frame.current), []);
 
   const end = (commit: boolean) => {
     const g = gesture.current;
     gesture.current = null;
+    cancelAnimationFrame(frame.current);
     if (!g || g.axis !== "x") return;
-    const dx = dragXRef.current;
-    setDragging(false);
-    setDragX(0);
-    if (!commit) return;
+    const dx = g.dx;
     const width = viewportRef.current?.clientWidth ?? 1;
     const velocity = Math.abs(dx) / Math.max(performance.now() - g.t, 1);
-    const far = Math.abs(dx) > width * 0.18 || (velocity > 0.45 && Math.abs(dx) > 24);
-    if (!far) return;
-    const next = Math.min(Math.max(index + (dx < 0 ? 1 : -1), 0), count - 1);
+    const far = commit && (Math.abs(dx) > width * 0.18 || (velocity > 0.45 && Math.abs(dx) > 24));
+    const next = far ? Math.min(Math.max(index + (dx < 0 ? 1 : -1), 0), count - 1) : index;
     if (next !== index) onIndex(next);
+    else apply(0, true); // vrati se na mjesto
   };
 
   const onPointerDown = (e: React.PointerEvent) => {
     if (count < 2 || (e.pointerType === "mouse" && e.button !== 0)) return;
-    gesture.current = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), axis: null };
+    gesture.current = { id: e.pointerId, x: e.clientX, y: e.clientY, t: performance.now(), axis: null, dx: 0 };
   };
 
   const onPointerMove = (e: React.PointerEvent) => {
@@ -76,11 +97,16 @@ function SwipeTrack({
         return;
       }
       viewportRef.current?.setPointerCapture(e.pointerId);
-      setDragging(true);
     }
     // Na prvoj i zadnjoj fotografiji traka se samo malo "opire"
     const atEdge = (index === 0 && dx > 0) || (index === count - 1 && dx < 0);
-    setDragX(atEdge ? dx * 0.3 : dx);
+    g.dx = atEdge ? dx * 0.3 : dx;
+    if (!frame.current) {
+      frame.current = requestAnimationFrame(() => {
+        frame.current = 0;
+        if (gesture.current) apply(gesture.current.dx, false);
+      });
+    }
   };
 
   return (
@@ -92,17 +118,13 @@ function SwipeTrack({
       onPointerMove={onPointerMove}
       onPointerUp={() => end(true)}
       onPointerCancel={() => end(false)}
-            // Na dodir preglednik prst automatski veže za fotografiju; kad ga galerija preuzme,
-      // fotografija "gubi" prst. To NIJE kraj pokreta — reagiramo samo kad ga izgubi sama galerija.
+      // Kad galerija preuzme prst, fotografija ga "gubi" — to nije kraj pokreta
       onLostPointerCapture={(e) => {
         if (e.target === e.currentTarget) end(true);
       }}
       onDragStart={(e) => e.preventDefault()}
     >
-      <div
-        className={`gallery-track flex h-full ${dragging ? "" : "is-settling"}`}
-        style={{ transform: `translate3d(calc(${-index * 100}% + ${dragX}px), 0, 0)` }}
-      >
+      <div ref={trackRef} className="gallery-track flex h-full">
         {children}
       </div>
     </div>
@@ -110,31 +132,28 @@ function SwipeTrack({
 }
 
 /**
- * Jedna fotografija: uvijek prikazana CIJELA (object-contain), nikad odrezana.
- * Iza nje je zamućena mala verzija iste fotografije — ispunjava rubove umjesto crnih traka
- * i vidi se odmah, dok se oštra verzija još učitava.
+ * Jedna fotografija — uvijek prikazana CIJELA (object-contain) na tamnoj podlozi.
+ * Memo: pri listanju se ne renderira ponovo. (Zamućena pozadina iza fotografija je
+ * uklonjena: blur filter je na mobitelu bio glavni uzrok zapinjanja.)
  */
-function Slide({ img, load, priority, sizes }: { img: GalleryImage; load: boolean; priority?: boolean; sizes: string }) {
+const Slide = memo(function Slide({ img, load, priority, sizes }: { img: GalleryImage; load: boolean; priority?: boolean; sizes: string }) {
   return (
-    <div className="relative h-full w-full shrink-0 overflow-hidden">
+    <div className="gallery-slide relative h-full w-full shrink-0 overflow-hidden">
       {load && (
-        <>
-          <Image src={img.src} alt="" aria-hidden="true" fill sizes="88px" className="scale-110 object-cover opacity-60 blur-2xl" draggable={false} />
-          <Image
-            src={img.src}
-            alt={img.alt}
-            fill
-            priority={priority}
-            loading={priority ? undefined : "eager"}
-            sizes={sizes}
-            className="object-contain"
-            draggable={false}
-          />
-        </>
+        <Image
+          src={img.src}
+          alt={img.alt}
+          fill
+          priority={priority}
+          loading={priority ? undefined : "eager"}
+          sizes={sizes}
+          className="object-contain"
+          draggable={false}
+        />
       )}
     </div>
   );
-}
+});
 
 /**
  * Galerija vozila: klizanje prstom samo lijevo/desno, strelice tipkovnice,
@@ -145,28 +164,14 @@ export function Gallery({ images, title }: { images: GalleryImage[]; title: stri
   const thumbsRef = useRef<HTMLUListElement>(null);
   const [index, setIndex] = useState(0);
   const [open, setOpen] = useState(false);
-  // Fotografije koje su jednom učitane ostaju u DOM-u (nema ponovnog učitavanja ni treptanja)
-  const [loaded, setLoaded] = useState<Set<number>>(() => new Set([0, 1, 2]));
   const count = images.length;
 
+  // Aktivna sličica uvijek vidljiva — pomiče se samo traka sličica, nikad cijela stranica
   useEffect(() => {
-    setLoaded((prev) => {
-      let changed = false;
-      const next = new Set(prev);
-      for (let d = -PRELOAD; d <= PRELOAD; d++) {
-        const i = (index + d + count) % Math.max(count, 1);
-        if (!next.has(i)) {
-          next.add(i);
-          changed = true;
-        }
-      }
-      return changed ? next : prev;
-    });
-    // Aktivna sličica uvijek vidljiva — pomiče se samo traka sličica, nikad cijela stranica
     const list = thumbsRef.current;
     const thumb = list?.children[index] as HTMLElement | undefined;
     if (list && thumb) list.scrollTo({ left: thumb.offsetLeft - (list.clientWidth - thumb.clientWidth) / 2, behavior: "smooth" });
-  }, [index, count]);
+  }, [index]);
 
   const go = useCallback((i: number) => setIndex((i + count) % count), [count]);
 
@@ -208,17 +213,11 @@ export function Gallery({ images, title }: { images: GalleryImage[]; title: stri
 
   return (
     <section aria-roledescription="galerija" aria-label={`Fotografije: ${title}`} onKeyDown={onKeyDown}>
-      <div className="relative select-none">
-        <SwipeTrack
-          index={index}
-          count={count}
-          onIndex={setIndex}
-          touchAction="pan-y pinch-zoom"
-          className="aspect-[4/3] rounded-sm bg-graphite"
-        >
+      <div className="relative select-none overflow-hidden rounded-sm bg-graphite">
+        <SwipeTrack index={index} count={count} onIndex={setIndex} touchAction="pan-y pinch-zoom" className="aspect-[4/3]">
           {images.map((img, i) => (
             <div key={img.src} className="h-full w-full shrink-0" role="group" aria-roledescription="fotografija" aria-label={`${i + 1} od ${count}`} aria-hidden={i !== index}>
-              <Slide img={img} load={loaded.has(i)} priority={i === 0} sizes="(min-width: 1024px) 60vw, 100vw" />
+              <Slide img={img} load={inWindow(i, index, count)} priority={i === 0} sizes="(min-width: 1024px) 60vw, 100vw" />
             </div>
           ))}
         </SwipeTrack>
@@ -278,10 +277,8 @@ export function Gallery({ images, title }: { images: GalleryImage[]; title: stri
           </div>
           <SwipeTrack index={index} count={count} onIndex={setIndex} touchAction="pinch-zoom" className="min-h-0 flex-1">
             {images.map((img, i) => (
-              <div key={img.src} className="relative h-full w-full shrink-0" aria-hidden={i !== index}>
-                {open && loaded.has(i) && (
-                  <Image src={img.src} alt={img.alt} fill sizes="100vw" className="object-contain" loading="eager" draggable={false} />
-                )}
+              <div key={img.src} className="h-full w-full shrink-0" aria-hidden={i !== index}>
+                <Slide img={img} load={open && inWindow(i, index, count)} sizes="100vw" />
               </div>
             ))}
           </SwipeTrack>

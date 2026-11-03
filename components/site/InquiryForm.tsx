@@ -113,10 +113,11 @@ export function InquiryForm({
         {pending && <LoaderCircle className="size-4 animate-spin" aria-hidden="true" />}
         {pending ? "Šaljem…" : "Pošalji upit"}
       </button>
+            {/* Sloj 1 obavijesti (čl. 15. ZZLP): svrha + poveznica; sve ostalo je u Politici privatnosti */}
       <p className={`text-[0.8125rem] ${dark ? "text-fog" : "text-ink-muted"}`}>
-        Email koristimo samo za odgovor na ovaj upit.{" "}
-        <a href="/privatnost" className="underline underline-offset-2">
-          Privatnost
+        Email koristimo samo za odgovor na upit.{" "}
+        <a href="/privatnost#upiti" className="underline underline-offset-2">
+          Politika privatnosti
         </a>
       </p>
     </form>

@@ -22,35 +22,43 @@ function resultLabel(n: number): string {
   return `${n} vozila`;
 }
 
-/** Urednički prikaz premium vozila: veće fotografije i više podataka. */
+/**
+ * Urednički prikaz premium vozila: veća fotografija i više podataka.
+ *
+ * Fotografija se prikazuje CIJELA i bez zamućenih traka sa strane: okvir uvijek ima
+ * omjer same fotografije. Na velikom ekranu širina stupca s fotografijom računa se iz
+ * tog omjera (najviše 46 % kartice i najviše 28rem visine), pa kartica ostaje
+ * kompaktna, a tekst dobiva ostatak širine. Fotografija je okomito centrirana uz tekst.
+ */
 export function EditorialCard({ vehicle, priority }: { vehicle: Card; priority?: boolean }) {
   const cover = vehicle.vehicle_images[0];
+  const natural = fitsNaturalFrame(cover);
   return (
-    <article className="group relative grid overflow-hidden rounded-sm bg-asphalt text-white md:grid-cols-[1.5fr_1fr]">
-      <div
-        className="relative aspect-[var(--ar)] overflow-hidden md:aspect-auto md:min-h-[23.75rem]"
-        style={{ "--ar": String(photoRatio(cover)) } as React.CSSProperties}
-      >
+    <article
+      className="group relative grid overflow-hidden rounded-sm bg-asphalt text-white lg:grid-cols-[min(46%,calc(var(--ar)*28rem))_minmax(0,1fr)] lg:items-center"
+      style={{ "--ar": String(photoRatio(cover)) } as React.CSSProperties}
+    >
+      <div className="relative aspect-[var(--ar)] w-full overflow-hidden bg-graphite">
         {cover ? (
           <CoverPhoto
             src={vehicleImageUrl(cover.storage_path)}
             alt={vehicleAlt(vehicle, cover, 0)}
             priority={priority}
-            sizes="(min-width: 768px) 60vw, 100vw"
-            backdrop={fitsNaturalFrame(cover) ? "md" : "always"}
+            sizes="(min-width: 1024px) 46vw, 100vw"
+            backdrop={natural ? "never" : "always"}
             className="transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.02]"
           />
         ) : (
-          <div className="flex h-full items-center justify-center bg-graphite text-fog">
+          <div className="flex h-full items-center justify-center text-fog">
             <ImageOff className="size-8" aria-hidden="true" />
           </div>
         )}
         {vehicle.status !== "available" && <StatusBadge status={vehicle.status} className="absolute left-4 top-4" />}
       </div>
-      <div className="flex flex-col justify-between gap-8 p-6 sm:p-8">
+      <div className="flex flex-col justify-center gap-7 p-6 sm:p-8 lg:px-10">
         <div>
           <p className="text-sm font-medium text-fog">{vehicle.brand}</p>
-          <h3 className="mt-1 text-[1.625rem] leading-tight">
+          <h3 className="mt-1 text-[1.5rem] leading-tight sm:text-[1.625rem]">
             <Link href={`/vozila/${vehicle.slug}`} className="after:absolute after:inset-0 after:content-['']">
               {vehicle.title}
             </Link>
@@ -60,7 +68,7 @@ export function EditorialCard({ vehicle, priority }: { vehicle: Card; priority?:
             <p className="mt-3 text-sm font-medium text-steel-light">{formatArrival(vehicle)}</p>
           )}
         </div>
-        <dl className="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line-dark pt-6 text-sm">
+        <dl className="grid grid-cols-2 gap-x-6 gap-y-4 border-t border-line-dark pt-6 text-sm xl:grid-cols-4">
           <div>
             <dt className="text-fog">Godina</dt>
             <dd className="tabular mt-0.5 font-semibold">{vehicle.year}.</dd>

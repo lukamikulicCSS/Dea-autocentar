@@ -15,6 +15,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: absoluteUrl("/u-dolasku"), lastModified: latest, changeFrequency: "daily", priority: 0.7 },
     { url: absoluteUrl("/o-nama"), changeFrequency: "monthly", priority: 0.5 },
     { url: absoluteUrl("/kontakt"), changeFrequency: "monthly", priority: 0.6 },
+    { url: absoluteUrl("/privatnost"), changeFrequency: "yearly", priority: 0.2 },
+    { url: absoluteUrl("/uvjeti-koristenja"), changeFrequency: "yearly", priority: 0.2 },
     ...vehicles.map((v) => ({
       url: absoluteUrl(`/vozila/${v.slug}`),
       lastModified: new Date(v.updated_at),

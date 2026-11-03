@@ -350,8 +350,45 @@ Vidi poglavlja 2 i 3.
 1. **Adresa:** u bazi je `Sarajevska 135`, a OLX profil salona navodi `Sarajevska 136`. Potvrdite s vlasnikom i ispravite u Postavkama.
 2. **Google Maps poveznica i koordinate** (Postavke → Lokacija), važni za lokalni SEO.
 3. **Logo u SVG formatu:** trenutni logo je izvučen iz JPG slike (PNG s prozirnom pozadinom). Izgleda dobro, ali SVG bi bio oštriji.
-4. **Tekst „Privatnost“** opisuje stvarno ponašanje stranice. Neka ga vlasnik ili pravni savjetnik pregleda i dopuni podacima o pravnoj osobi.
-5. **Tekst „O nama“** i prednosti salona napisani su prema salonovom OLX profilu. Neka ih vlasnik potvrdi (mogu se mijenjati u Postavkama).
-6. Ručna provjera iz 12.6 s pravim Supabaseom.
+4. **Pravni podaci u `lib/legal.ts`**: puni naziv pravnog lica, ID broj, registar i email za privatnost (iz rješenja o registraciji). Bez njih Politika privatnosti nema potpune podatke o kontroloru (čl. 15. st. 1. t. a) ZZLP BiH).
+5. **`CRON_SECRET`** postavljen na Vercelu (automatsko brisanje starih upita). Bez njega se rokovi objavljeni na /privatnost ne poštuju.
+6. **Pravni tekstovi** (/privatnost, /uvjeti-koristenja) neka pregleda vlasnik ili pravni savjetnik prije objave (vidi „Privatnost i kolačići“ niže).
+7. **Tekst „O nama“** i prednosti salona napisani su prema salonovom OLX profilu. Neka ih vlasnik potvrdi (mogu se mijenjati u Postavkama).
+8. Ručna provjera iz 12.6 s pravim Supabaseom.
 
-Bez točaka 1 i 6 stranica **nije spremna za produkciju**.
+Bez točaka 1, 4, 5 i 8 stranica **nije spremna za produkciju**.
+
+
+## Privatnost i kolačići (ZZLP BiH, „Sl. glasnik BiH“ 12/25)
+
+Stranica je izrađena po načelu „privatnost od samog početka“ (čl. 27. Zakona). Sažetak za vlasnika i održavatelja:
+
+| Što | Kako je riješeno | Gdje u kodu |
+| --- | --- | --- |
+| Kolačići | Javno se koriste samo nužni kolačići (`dea_privola`, 180 dana). Nema analitike ni oglasa. | `lib/consent.ts` |
+| Google Karte | **Odluka investitora:** karta se učitava odmah (legitimni interes, čl. 8. st. 1. t. f), uz ograničenja: tek kad dođe u vidno polje, ne prije hidracije, i uz isključivanje u svakom trenutku („Isključi kartu“ / „Postavke kolačića“, čl. 23). Strožija varijanta (učitavanje tek uz privolu) može se vratiti ako investitor odluči drukčije. | `components/site/LocationMap.tsx` |
+| Obavijest o kolačićima | Obavještava o Google karti; „Isključi kartu“ i „U redu“ jednako vidljivi; „Postavke kolačića“ u podnožju na svakoj stranici. | `components/site/consent/` |
+| Informacije pri prikupljanju (čl. 15) | Kratka obavijest uz obrazac + Politika privatnosti; dijelovi o Resendu i Turnstileu prikazuju se samo kad su uključeni. | `InquiryForm.tsx`, `app/(site)/privatnost` |
+| Rokovi čuvanja | IP sažetak 30 dana, upit 24 mjeseca — briše dnevni Vercel Cron. | migracija `20261102100000_privacy_retention.sql`, `app/api/cron/ciscenje-podataka` |
+| Uvjeti korištenja | Oglas nije ponuda, greške u cijeni, okvirni datumi, autorska prava, ograničenje odgovornosti. | `app/(site)/uvjeti-koristenja` |
+
+**Pravila za buduće izmjene** (da stranica ostane usklađena):
+
+1. **Ne dodavati analitiku, piksele, chat widgete, YouTube/Instagram ugradnje ni Google Fonts** bez nove kategorije privole. Ako se doda: nova kategorija u `ConsentBanner`, učitavanje tek nakon privole, `CONSENT_VERSION` + 1, ažurirati tablicu kolačića na /privatnost i `POLICY` u `lib/legal.ts`.
+2. **Novo polje u obrascu** (ime, telefon…) = nova obrada: ažurirati /privatnost i razmisliti treba li polje uopće (smanjenje obima podataka).
+3. **Novi pružatelj usluge** (npr. drugi email servis) = novi obrađivač: upisati ga na /privatnost, potpisati ugovor o obradi (DPA) i za pružatelje iz SAD-a provjeriti da su na popisu dataprivacyframework.gov.
+4. Promjena rokova: istovremeno u migraciji i u `RETENTION` (`lib/legal.ts`).
+
+
+### Procjena legitimnog interesa — Google karta (za spis investitora)
+
+Karta se učitava bez prethodne privole, na osnovu legitimnog interesa (čl. 8. st. 1. t. f) ZZLP BiH). Ova procjena dokumentira zašto je to razmjerno; čuva je investitor kao kontrolor.
+
+| Korak | Ocjena |
+| --- | --- |
+| **1. Interes** | Pokazati posjetiteljima gdje je salon i olakšati dolazak — stvaran, zakonit i konkretan poslovni interes. |
+| **2. Nužnost** | Interaktivna karta je najupotrebljiviji način prikaza lokacije; blaža alternativa (poveznica „Otvori u Google Kartama“) je uvijek ponuđena uz kartu. |
+| **3. Ravnoteža** | Podaci: IP adresa i tehnički podaci preglednika koje prima Google (ne posebne kategorije). Očekivanje: posjetitelj stranice salona razumno očekuje kartu s lokacijom. Mjere: učitavanje tek u vidnom polju (`loading="lazy"`), ne prije čitanja izbora posjetitelja, salon ne prima nikakve podatke s karte, nema analitike ni oglasa, isključivanje jednim klikom (obavijest, podnožje, mjesto karte), jasna informacija u politici privatnosti i uvjetima korištenja. |
+| **Zaključak** | Interes salona ne prevladava nad pravima posjetitelja samo uz navedene mjere; ako se bilo koja ukloni, procjenu treba ponoviti ili prijeći na model privole. |
+
+Odluku o ovom modelu donio je investitor; izvođač je ponudio i strožu varijantu (karta tek uz privolu). Preporuka: investitor potvrđuje odluku pisanim putem (email) i procjenu ponavlja kad se promijeni način prikaza karte ili propis.

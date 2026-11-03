@@ -2,7 +2,9 @@ import Link from "next/link";
 import { Clock, Mail, MapPin, Phone } from "lucide-react";
 import { fullAddress, mapsHref, openingHours } from "@/lib/contact";
 import { phoneHref } from "@/lib/format";
+import { LEGAL } from "@/lib/legal";
 import type { SiteSettings } from "@/lib/types";
+import { CookieSettingsButton } from "./consent/CookieSettingsButton";
 import { Logo } from "./Logo";
 import { FacebookIcon, InstagramIcon } from "./SocialIcons";
 
@@ -87,9 +89,14 @@ export function Footer({ settings }: { settings: SiteSettings }) {
       </div>
       <div className="border-t border-line-dark">
         <div className="wrap flex flex-col gap-2 py-5 text-[0.8125rem] sm:flex-row sm:items-center sm:justify-between">
-          <p>© {year} {settings.business_name}</p>
-          <div className="flex items-center gap-5">
-            <Link className="hover:text-white" href="/privatnost">Privatnost i kolačići</Link>
+          <p>
+            © {year} {LEGAL.companyName || settings.business_name}
+            {LEGAL.idNumber && <span className="tabular"> · ID broj {LEGAL.idNumber}</span>}
+          </p>
+          <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+            <Link className="hover:text-white" href="/privatnost">Politika privatnosti</Link>
+            <Link className="hover:text-white" href="/uvjeti-koristenja">Uvjeti korištenja</Link>
+            <CookieSettingsButton className="hover:text-white" />
             <Link className="text-fog/60 hover:text-white" href="/admin">Prijava za osoblje</Link>
           </div>
         </div>

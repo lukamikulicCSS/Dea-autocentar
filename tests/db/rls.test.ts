@@ -581,3 +581,73 @@ describe("zaprimanje upita (server)", () => {
     });
   });
 });
+
+describe("rokovi čuvanja podataka (purge_expired_inquiry_data)", () => {
+  it("briše IP sažetak nakon 30 dana i upit nakon 24 mjeseca, a svježe upite ne dira", async () => {
+    await as("service_role", null, async (tx) => {
+      const ins = async (age: string) =>
+        (
+          await rows<{ id: string }>(
+            tx,
+            `insert into public.inquiries (email, message, ip_hash, created_at)
+             values ('stari@example.com', 'x', $1, now() - $2::interval) returning id`,
+            ["f".repeat(64), age],
+          )
+        )[0]!.id;
+      const fresh = await ins("1 day");
+      const month = await ins("45 days");
+      const old = await ins("25 months");
+
+      const res = await rows<{ r: { ip_hashes_cleared: number; inquiries_deleted: number } }>(
+        tx,
+        `select public.purge_expired_inquiry_data() as r`,
+      );
+      expect(res[0]!.r.inquiries_deleted).toBeGreaterThanOrEqual(1);
+
+      const left = await rows<{ id: string; ip_hash: string | null }>(
+        tx,
+        `select id, ip_hash from public.inquiries where id = any($1::uuid[])`,
+        [[fresh, month, old]],
+      );
+      expect(left.find((r) => r.id === fresh)?.ip_hash).toBe("f".repeat(64));
+      expect(left.find((r) => r.id === month)?.ip_hash).toBeNull();
+      expect(left.find((r) => r.id === old)).toBeUndefined();
+    });
+  });
+
+  it("ne smiju ga pozvati posjetitelj ni administrator", async () => {
+    await expect(as("anon", null, (tx) => tx.query(`select public.purge_expired_inquiry_data()`))).rejects.toThrow(
+      /permission denied/,
+    );
+    await expect(
+      as("authenticated", ADMIN, (tx) => tx.query(`select public.purge_expired_inquiry_data()`)),
+    ).rejects.toThrow(/permission denied/);
+  });
+
+  it("IP sažetak smije se samo obrisati, ne i promijeniti", async () => {
+    await as("service_role", null, async (tx) => {
+      const id = (
+        await rows<{ id: string }>(
+          tx,
+          `insert into public.inquiries (email, ip_hash) values ('h@example.com', $1) returning id`,
+          ["1".repeat(64)],
+        )
+      )[0]!.id;
+      await expect(
+        tx.query(`update public.inquiries set ip_hash = $1 where id = $2`, ["2".repeat(64), id]),
+      ).rejects.toThrow(/inquiry_immutable|ne može se mijenjati/);
+    });
+    await as("service_role", null, async (tx) => {
+      const id = (
+        await rows<{ id: string }>(
+          tx,
+          `insert into public.inquiries (email, ip_hash) values ('h@example.com', $1) returning id`,
+          ["1".repeat(64)],
+        )
+      )[0]!.id;
+      await tx.query(`update public.inquiries set ip_hash = null where id = $1`, [id]);
+      const r = await rows<{ ip_hash: string | null }>(tx, `select ip_hash from public.inquiries where id = $1`, [id]);
+      expect(r[0]!.ip_hash).toBeNull();
+    });
+  });
+});

@@ -24,7 +24,8 @@ export function fitsNaturalFrame(img: Img | undefined): boolean {
  * preuzimaju samo jednom.
  *
  * backdrop: kad se zamućena pozadina crta. "sm"/"md" = tek od te širine (ispod nje okvir
- * prati omjer fotografije pa pozadina ne bi bila vidljiva — ne trošimo GPU na mobitelu).
+ * prati omjer fotografije pa pozadina ne bi bila vidljiva — ne trošimo GPU na mobitelu);
+ * "never" = okvir uvijek prati omjer fotografije, pozadina se ne crta ni ne preuzima.
  */
 export function CoverPhoto({
   src,
@@ -39,19 +40,21 @@ export function CoverPhoto({
   sizes: string;
   priority?: boolean;
   className?: string;
-  backdrop?: "always" | "sm" | "md";
+  backdrop?: "always" | "sm" | "md" | "never";
 }) {
   const backdropClass = backdrop === "sm" ? "hidden sm:block" : backdrop === "md" ? "hidden md:block" : "";
   return (
     <>
-      <Image
-        src={src}
-        alt=""
-        aria-hidden="true"
-        fill
-        sizes={sizes}
-        className={`scale-125 object-cover opacity-70 blur-2xl brightness-75 saturate-125 ${backdropClass}`}
-      />
+      {backdrop !== "never" && (
+        <Image
+          src={src}
+          alt=""
+          aria-hidden="true"
+          fill
+          sizes={sizes}
+          className={`scale-125 object-cover opacity-70 blur-2xl brightness-75 saturate-125 ${backdropClass}`}
+        />
+      )}
       <Image src={src} alt={alt} fill sizes={sizes} priority={priority} className={`object-contain ${className}`} />
     </>
   );
