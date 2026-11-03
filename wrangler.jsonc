@@ -25,12 +25,11 @@
   "workers_dev": true,
   "preview_urls": false,
 
-  // Produkcijska domena — otkomentirajte kad je domena aktivna u Cloudflareu
-  // (nameserveri na nic.ba postavljeni i zona „Active“).
-  // "routes": [
-  //   { "pattern": "autocentardea.ba", "custom_domain": true },
-  //   { "pattern": "www.autocentardea.ba", "custom_domain": true }
-  // ],
+    // Produkcijska domena
+  "routes": [
+    { "pattern": "autocentardea.ba", "custom_domain": true },
+    { "pattern": "www.autocentardea.ba", "custom_domain": true }
+  ],
 
   // Dnevno brisanje isteklih podataka iz upita (03:15 UTC) — vidi worker.ts
   "triggers": { "crons": ["15 3 * * *"] },
