@@ -14,8 +14,8 @@ Web stranica salona **Auto Centar DEA** (Zenica) s ponudom vozila, upitima kupac
 1. [Brzi start (lokalno)](#1-brzi-start-lokalno)
 2. [Postavljanje Supabasea](#2-postavljanje-supabasea-korak-po-korak)
 3. [Prvi administrator](#3-prvi-administrator)
-4. [Objava na Vercelu](#4-objava-na-vercelu)
-5. [Domena (Cloudflare) i indeksiranje](#5-domena-cloudflare-i-indeksiranje)
+4. [Objava na Cloudflareu](#4-objava-na-cloudflareu)
+5. [Domena (autocentardea.ba) i indeksiranje](#5-domena-autocentardeaba-i-indeksiranje)
 6. [Kasnije: Resend i Turnstile](#6-kasnije-resend-email-i-turnstile)
 7. [Varijable okruženja](#7-varijable-okruženja)
 8. [Struktura projekta](#8-struktura-projekta)
@@ -81,7 +81,7 @@ U Dashboardu → **Authentication**:
 
 1. **Sign In / Providers → Email:** ostavite uključeno. **Isključite „Allow new users to sign up“.** Račune stvaraju samo administratori, pa se nitko ne može sam registrirati. Čak i da se netko registrira, nema pristup jer nije u tablici `admins`, što je testirano.
 2. **Sign In / Providers → Email → Minimum password length:** postavite na **12**.
-3. **URL Configuration → Site URL:** produkcijska adresa (npr. `https://autocentar-dea.vercel.app`, kasnije prava domena).
+3. **URL Configuration → Site URL:** produkcijska adresa (npr. `https://autocentar-dea.<račun>.workers.dev`, kasnije `https://autocentardea.ba`).
 4. **URL Configuration → Redirect URLs:** dodajte `http://localhost:3000/**` i produkcijsku adresu s `/**`.
 5. **Emails → Templates → Reset Password:** zamijenite poveznicu u predlošku ovom (potrebno za „Zaboravljena lozinka“):
 
@@ -123,32 +123,68 @@ Ostale administratore (npr. zaposlenike) vlasnik dodaje sam u **Postavke → Adm
 
 ---
 
-## 4. Objava na Vercelu
+## 4. Objava na Cloudflareu
 
-1. Pushajte repozitorij na GitHub (ručno, kao i inače).
-2. Na <https://vercel.com/new> uvezite repozitorij. Framework se prepoznaje automatski (Next.js). Build naredba: `npm run build`.
-3. U **Settings → Environment Variables** upišite varijable iz poglavlja 7 (najmanje tri Supabase varijable) za **Production** i **Preview**.
-4. **Deploy.**
-5. Nakon prvog deploya upišite Vercel adresu u Supabase **Site URL** i **Redirect URLs** (korak 2.3).
+Stranica se izvršava na **Cloudflare Workers** preko adaptera [OpenNext](https://opennext.js.org/cloudflare). Baza, prijava i fotografije ostaju na Supabaseu.
 
-Napomene:
+**Plan:** Cloudflare račun može ostati na besplatnom planu, ali Worker treba **Workers Paid (5 USD/mj.)** — besplatni plan ima ograničenje od 10 ms procesora po zahtjevu i 3 MB veličine Workera, što Next.js aplikacija prelazi.
 
-- Fotografije se smanjuju u pregledniku (do 2560 px) i zatim ih server ponovno obrađuje (WebP, do 2400 px). Zbog toga uploadi ostaju ispod Vercelovog ograničenja zahtjeva od 4,5 MB.
-- Optimizacija slika (`next/image`) troši Vercelovu kvotu za slike. Za 30–100 vozila to je unutar besplatnog plana. Ako se vlasnici kasnije odluče za drugi hosting, ništa se ne mijenja osim tog servisa.
+### 4.1 Jednokratna priprema (Cloudflare dashboard ili `npx wrangler`)
+
+1. `npx wrangler login` (otvara preglednik; prijava na račun investitora).
+2. **Workers Paid:** dashboard → Workers & Pages → Plans.
+3. **R2 bucket za keš:** `npx wrangler r2 bucket create autocentar-dea-cache`
+4. **Tajne** (svaka se upisuje jednom; vrijednosti kao u `.env.local`, ali produkcijske):
+   ```bash
+   npx wrangler secret put SUPABASE_SECRET_KEY
+   npx wrangler secret put CRON_SECRET          # openssl rand -hex 32
+   npx wrangler secret put RESEND_API_KEY       # kad Resend bude spreman
+   npx wrangler secret put RESEND_FROM
+   npx wrangler secret put TURNSTILE_SECRET_KEY # kad Turnstile bude spreman
+   ```
+
+### 4.2 Varijable pri buildu
+
+`NEXT_PUBLIC_*` i `ALLOW_INDEXING` ugrađuju se u aplikaciju **pri buildu** (i `robots.txt` se tada generira). Moraju biti postavljene na računalu ili CI-ju koji radi build — u `.env.production` (ne commita se) ili kao *Build variables* u Workers Builds:
+
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+- `NEXT_PUBLIC_SITE_URL` — **obavezno** (`https://autocentardea.ba`; dok domena ne radi, adresa `*.workers.dev`)
+- `NEXT_PUBLIC_TURNSTILE_SITE_KEY` (kad bude spreman)
+- `ALLOW_INDEXING=true` — **tek** za build na produkcijskoj domeni
+
+### 4.3 Build i objava
+
+OpenNext službeno ne jamči rad na Windowsu. Zato:
+
+- **Preporučeno:** spojite GitHub repozitorij u dashboardu (Workers & Pages → autocentar-dea → Settings → Builds). Cloudflare tada sam radi build na Linuxu nakon svakog pusha na glavnu granu. Build naredba: `npx opennextjs-cloudflare build`, deploy naredba: `npx opennextjs-cloudflare deploy`.
+- **Lokalno:** u WSL-u (Ubuntu) `npm run preview` (Cloudflare runtime na vašem računalu) i `npm run deploy`.
+
+Za svakodnevni razvoj i dalje vrijedi `npm run dev` (Windows je u redu).
+
+### 4.4 Što se razlikuje od Vercela
+
+- **Fotografije pri uploadu** ponovno kodira Cloudflare Images (`lib/image-processing.ts`) umjesto sharpa — isti rezultat: WebP, do 2400 px, bez EXIF/GPS podataka.
+- **`next/image`** smanjuje fotografije preko Cloudflare Images (binding `IMAGES`). Postoji besplatna mjesečna kvota; naplata ide po jedinstvenoj transformaciji.
+- **Dnevno brisanje upita** pokreće Cron Trigger (`wrangler.jsonc` → `worker.ts`) u 03:15 UTC.
+- **Keš stranica** je u R2, a osvježavanje nakon izmjene u administraciji ide preko Durable Objects (`open-next.config.ts`).
+- **Statične datoteke** dobivaju zaglavlja iz `public/_headers` (ne iz `next.config.ts`).
+- **IP adresa** za ograničenje upita čita se iz `CF-Connecting-IP`.
 
 ---
 
-## 5. Domena (Cloudflare) i indeksiranje
+## 5. Domena (autocentardea.ba) i indeksiranje
 
-1. U Vercelu: **Settings → Domains → Add** i upišite domenu (npr. `dea.ba` i `www.dea.ba`).
-2. U Cloudflareu upišite DNS zapise koje Vercel prikaže (obično `A 76.76.21.21` za apex i `CNAME cname.vercel-dns.com` za `www`). Proxy status postavite na **DNS only** (siva oblačić-ikona), jer TLS izdaje Vercel.
-3. Na Vercelu postavite:
-   - `NEXT_PUBLIC_SITE_URL=https://dea.ba`
-   - `ALLOW_INDEXING=true` (**samo za Production**, nikad za Preview)
-4. Redeploy. Zatim u Supabaseu ažurirajte **Site URL** i **Redirect URLs**.
-5. U Google Search Console dodajte domenu i pošaljite `https://dea.ba/sitemap.xml`.
+1. **Cloudflare → Add a domain** → `autocentardea.ba` → besplatni plan. Kod pitanja o AI crawlerima odaberite da **ne blokira** AI pretraživače (vidljivost u ChatGPT, Perplexity, Gemini). Isključite i „Managed robots.txt“ — stranica ima vlastiti `robots.txt`.
+2. Cloudflare prikaže **dva nameservera** → upišite ih na **nic.ba** (Detalji domene → nameserveri). Pričekajte da zona postane „Active“ (obično nekoliko sati, najviše 48 h).
+3. U `wrangler.jsonc` otkomentirajte `routes` (custom domain za `autocentardea.ba` i `www.autocentardea.ba`) i deployajte. Cloudflare sam izda SSL certifikat.
+4. **www → bez www:** Cloudflare → Rules → Redirect Rules → predložak „Redirect from WWW to root“ (301).
+5. Novi build s `NEXT_PUBLIC_SITE_URL=https://autocentardea.ba` i `ALLOW_INDEXING=true`, deploy.
+6. U `wrangler.jsonc` postavite `"workers_dev": false` i deployajte — testna adresa prestaje raditi, nema duplikata u Googleu.
+7. **Supabase → Authentication → URL Configuration:** Site URL `https://autocentardea.ba`, Redirect URLs `https://autocentardea.ba/**` (inače link za novu lozinku vodi na staru adresu).
+8. **Turnstile:** u postavkama widgeta dodajte hostname `autocentardea.ba`.
+9. **Google Search Console** i **Bing Webmaster Tools:** dodajte domenu i pošaljite `https://autocentardea.ba/sitemap.xml`.
 
-Dok `ALLOW_INDEXING` nije `true`, `robots.txt` zabranjuje indeksiranje i sve stranice imaju `noindex`. Tako privremene adrese ne završe u Googleu.
+Dok `ALLOW_INDEXING` nije `true`, `robots.txt` zabranjuje indeksiranje i sve stranice imaju `noindex`.
 
 ---
 
@@ -160,7 +196,7 @@ Obje integracije su **ugrađene, ali isključene** dok ne postavite ključeve. U
 
 1. Na <https://resend.com> dodajte domenu (npr. `dea.ba`) i u Cloudflare upišite DNS zapise koje Resend traži (SPF/DKIM).
 2. Kad je domena potvrđena, napravite API ključ.
-3. Na Vercelu postavite `RESEND_API_KEY=re_…` i `RESEND_FROM="Auto Centar DEA <upiti@dea.ba>"`. Zatim redeploy.
+3. Postavite tajne `RESEND_API_KEY=re_…` i `RESEND_FROM="Auto Centar DEA <upiti@autocentardea.ba>"` (`npx wrangler secret put …`). Novi deploy nije potreban, ali politika privatnosti prikaže Resend tek nakon sljedećeg osvježavanja stranice (najviše 1 h).
 4. Primatelji obavijesti upisuju se u **Admin → Postavke → Obavijesti o upitima** (početno `info@dea.ba`).
 
 Dok Resend nije postavljen, upiti se **spremaju u bazu** i vidljivi su u adminu, ali se email ne šalje. Aplikacija nigdje ne tvrdi da je email poslan.
@@ -343,7 +379,7 @@ Vidi poglavlja 2 i 3.
 - **Resend** (email obavijesti): kod je spreman, ključ nije postavljen.
 - **Cloudflare Turnstile:** kod je spreman, ključevi nisu postavljeni.
 - **Viber i WhatsApp:** polja postoje u Postavkama; gumbi se pojavljuju kad se upišu brojevi.
-- **Domena:** nije postavljena; koristi se Vercel adresa, a indeksiranje je isključeno.
+- **Domena:** `autocentardea.ba` (nic.ba), hosting na Cloudflareu; indeksiranje se uključuje tek na produkcijskoj domeni.
 
 ### 12.8 Preostalo prije produkcije
 
@@ -351,7 +387,7 @@ Vidi poglavlja 2 i 3.
 2. **Google Maps poveznica i koordinate** (Postavke → Lokacija), važni za lokalni SEO.
 3. **Logo u SVG formatu:** trenutni logo je izvučen iz JPG slike (PNG s prozirnom pozadinom). Izgleda dobro, ali SVG bi bio oštriji.
 4. **Pravni podaci u `lib/legal.ts`**: puni naziv pravnog lica, ID broj, registar i email za privatnost (iz rješenja o registraciji). Bez njih Politika privatnosti nema potpune podatke o kontroloru (čl. 15. st. 1. t. a) ZZLP BiH).
-5. **`CRON_SECRET`** postavljen na Vercelu (automatsko brisanje starih upita). Bez njega se rokovi objavljeni na /privatnost ne poštuju.
+5. **`CRON_SECRET`** postavljen kao Cloudflare tajna (automatsko brisanje starih upita). Bez njega se rokovi objavljeni na /privatnost ne poštuju.
 6. **Pravni tekstovi** (/privatnost, /uvjeti-koristenja) neka pregleda vlasnik ili pravni savjetnik prije objave (vidi „Privatnost i kolačići“ niže).
 7. **Tekst „O nama“** i prednosti salona napisani su prema salonovom OLX profilu. Neka ih vlasnik potvrdi (mogu se mijenjati u Postavkama).
 8. Ručna provjera iz 12.6 s pravim Supabaseom.
@@ -369,7 +405,7 @@ Stranica je izrađena po načelu „privatnost od samog početka“ (čl. 27. Za
 | Google Karte | **Odluka investitora:** karta se učitava odmah (legitimni interes, čl. 8. st. 1. t. f), uz ograničenja: tek kad dođe u vidno polje, ne prije hidracije, i uz isključivanje u svakom trenutku („Isključi kartu“ / „Postavke kolačića“, čl. 23). Strožija varijanta (učitavanje tek uz privolu) može se vratiti ako investitor odluči drukčije. | `components/site/LocationMap.tsx` |
 | Obavijest o kolačićima | Obavještava o Google karti; „Isključi kartu“ i „U redu“ jednako vidljivi; „Postavke kolačića“ u podnožju na svakoj stranici. | `components/site/consent/` |
 | Informacije pri prikupljanju (čl. 15) | Kratka obavijest uz obrazac + Politika privatnosti; dijelovi o Resendu i Turnstileu prikazuju se samo kad su uključeni. | `InquiryForm.tsx`, `app/(site)/privatnost` |
-| Rokovi čuvanja | IP sažetak 30 dana, upit 24 mjeseca — briše dnevni Vercel Cron. | migracija `20261102100000_privacy_retention.sql`, `app/api/cron/ciscenje-podataka` |
+| Rokovi čuvanja | IP sažetak 30 dana, upit 24 mjeseca — briše dnevni Cloudflare Cron Trigger. | migracija `20261102100000_privacy_retention.sql`, `app/api/cron/ciscenje-podataka`, `worker.ts` |
 | Uvjeti korištenja | Oglas nije ponuda, greške u cijeni, okvirni datumi, autorska prava, ograničenje odgovornosti. | `app/(site)/uvjeti-koristenja` |
 
 **Pravila za buduće izmjene** (da stranica ostane usklađena):

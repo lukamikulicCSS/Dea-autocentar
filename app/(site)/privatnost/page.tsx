@@ -133,18 +133,15 @@ export default async function PrivacyPage() {
               Frankfurtu (Njemačka, EU).
             </li>
             <li>
-              <strong>Vercel</strong> — hosting stranice; poslužitelj aplikacije je u Parizu (Francuska, EU), a statični
-              sadržaj može se isporučivati s najbližeg čvora mreže.
+              <strong>Cloudflare</strong> — hosting stranice, obrada fotografija vozila i DNS
+              {turnstile ? ", te usluga Turnstile za zaštitu obrasca od automatiziranih programa" : ""}. Stranica se
+              izvršava na Cloudflareovoj mreži, u pravilu u podatkovnom centru najbližem bazi podataka (EU), a statični
+              sadržaj isporučuje se s najbližeg čvora mreže.
             </li>
             {resend && (
               <li>
                 <strong>Resend</strong> — slanje obavijesti o novom upitu na email adrese djelatnika salona. Obavijest sadrži
                 vašu email adresu i poruku.
-              </li>
-            )}
-            {turnstile && (
-              <li>
-                <strong>Cloudflare</strong> — usluga Turnstile za zaštitu obrasca od automatiziranih programa.
               </li>
             )}
             <li>
@@ -157,7 +154,8 @@ export default async function PrivacyPage() {
           </p>
           <h3>Prenos podataka izvan Bosne i Hercegovine</h3>
           <p>
-            Navedeni pružatelji obrađuju podatke u državama Europske unije ili su društva sa sjedištem u SAD-u. Prenos se
+            Navedeni pružatelji obrađuju podatke u državama Europske unije ili su društva sa sjedištem u SAD-u (Cloudflare,
+            Resend), a Cloudflareova mreža obuhvaća i podatkovne centre izvan EU. Prenos se
             obavlja samo u države i prema primaocima za koje je Europska unija utvrdila odgovarajuću razinu zaštite (za SAD:
             primaoci uključeni u okvir EU–SAD o privatnosti podataka), što se prema čl. 47. st. 2. Zakona smatra
             adekvatnom zaštitom.

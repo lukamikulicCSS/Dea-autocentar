@@ -1,0 +1,18 @@
+# Zaglavlja za statične datoteke na Cloudflareu (Worker ne prolazi kroz njih,
+# pa za njih ne vrijede headers() iz next.config.ts).
+
+/_next/static/*
+  Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
+
+/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  X-Content-Type-Options: nosniff
+
+/images/*
+  Cache-Control: public, max-age=604800
+  X-Content-Type-Options: nosniff
+
+/brand/*
+  Cache-Control: public, max-age=604800
+  X-Content-Type-Options: nosniff

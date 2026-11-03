@@ -1,0 +1,56 @@
+/**
+ * Cloudflare Workers — konfiguracija hostinga (OpenNext adapter).
+ * Dokumentacija: https://opennext.js.org/cloudflare
+ *
+ * Tajne vrijednosti (ključevi) NE pišu se ovdje — postavljaju se u Cloudflare
+ * dashboardu (Workers → autocentar-dea → Settings → Variables and Secrets) ili s
+ * `npx wrangler secret put IME`. Popis je u README.md („Cloudflare“).
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "autocentar-dea",
+  // Vlastiti ulaz: OpenNext fetch handler + dnevni cron (worker.ts)
+  "main": "worker.ts",
+  "compatibility_date": "2026-10-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+
+  // Worker se izvršava blizu baze (Supabase, Frankfurt), a ne blizu posjetitelja:
+  // svaka stranica čita bazu, pa je ovo brže od izvršavanja „na rubu“.
+  "placement": { "mode": "smart" },
+
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+
+  // Adresa *.workers.dev služi samo za testiranje prije spajanja domene.
+  // Kad autocentardea.ba proradi, postavite na false (da Google ne vidi dvije iste stranice).
+  "workers_dev": true,
+  "preview_urls": false,
+
+  // Produkcijska domena — otkomentirajte kad je domena aktivna u Cloudflareu
+  // (nameserveri na nic.ba postavljeni i zona „Active“).
+  // "routes": [
+  //   { "pattern": "autocentardea.ba", "custom_domain": true },
+  //   { "pattern": "www.autocentardea.ba", "custom_domain": true }
+  // ],
+
+  // Dnevno brisanje isteklih podataka iz upita (03:15 UTC) — vidi worker.ts
+  "triggers": { "crons": ["15 3 * * *"] },
+
+  // Smanjivanje fotografija (next/image) i obrada fotografija pri uploadu
+  "images": { "binding": "IMAGES" },
+
+  // Keš stranica (ISR) — R2 bucket se stvara jednom: npx wrangler r2 bucket create autocentar-dea-cache
+  "r2_buckets": [{ "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "autocentar-dea-cache" }],
+
+  // Osvježavanje keša: vremensko (red čekanja) i na zahtjev nakon izmjene u administraciji
+  "durable_objects": {
+    "bindings": [
+      { "name": "NEXT_CACHE_DO_QUEUE", "class_name": "DOQueueHandler" },
+      { "name": "NEXT_TAG_CACHE_DO_SHARDED", "class_name": "DOShardedTagCache" }
+    ]
+  },
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["DOQueueHandler", "DOShardedTagCache"] }],
+
+  "services": [{ "binding": "WORKER_SELF_REFERENCE", "service": "autocentar-dea" }],
+
+  "observability": { "enabled": true }
+}

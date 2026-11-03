@@ -36,14 +36,14 @@ export function publicEnv() {
 export function siteUrl(): string {
   const explicit = process.env.NEXT_PUBLIC_SITE_URL;
   if (explicit) return explicit.replace(/\/+$/, "");
-  const vercel = process.env.VERCEL_PROJECT_PRODUCTION_URL ?? process.env.VERCEL_URL;
-  if (vercel) return `https://${vercel}`;
+  // NEXT_PUBLIC_SITE_URL je obavezan u produkciji (ugrađuje se pri buildu) — bez njega
+  // bi kanonske adrese i sitemap pokazivali na localhost.
   return "http://localhost:3000";
 }
 
 /**
  * Indeksiranje je dopušteno samo kad je to izričito uključeno (produkcijska domena).
- * Tako Vercel preview adrese nikad ne završe u Googleu.
+ * Tako testne adrese (npr. *.workers.dev) nikad ne završe u Googleu.
  */
 export function indexingAllowed(): boolean {
   return process.env.ALLOW_INDEXING === "true";

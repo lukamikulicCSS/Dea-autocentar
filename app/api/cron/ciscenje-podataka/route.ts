@@ -4,7 +4,8 @@ import { serviceClient } from "@/lib/supabase/service";
 
 /**
  * Dnevno brisanje isteklih podataka iz upita (rokovi u lib/legal.ts → RETENTION).
- * Poziva ga Vercel Cron (vercel.json) sa zaglavljem `Authorization: Bearer <CRON_SECRET>`.
+ * Poziva ga Cloudflare Cron Trigger (wrangler.jsonc → worker.ts) sa zaglavljem
+ * `Authorization: Bearer <CRON_SECRET>`.
  * Bez postavljenog CRON_SECRET ruta odbija svaki poziv.
  */
 export const dynamic = "force-dynamic";

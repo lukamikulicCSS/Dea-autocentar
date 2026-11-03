@@ -1,9 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
-import sharp from "sharp";
 import { assertAdmin, UnauthorizedError } from "@/lib/auth";
 import { friendlyDbError } from "@/lib/db-errors";
-import { MAX_IMAGE_EDGE, MAX_UPLOAD_BYTES, VEHICLE_BUCKET, sniffImageType } from "@/lib/images";
+import { ImageProcessingError, reencodeToWebp } from "@/lib/image-processing";
+import { MAX_UPLOAD_BYTES, VEHICLE_BUCKET, sniffImageType } from "@/lib/images";
 import { revalidatePublicSite } from "@/lib/revalidate";
 import { uuidSchema } from "@/lib/vehicles/schema";
 
@@ -17,8 +17,8 @@ function fail(message: string, status: number) {
 /**
  * Upload jedne fotografije vozila.
  * 1. provjera administratora (server), 2. ograničenje veličine, 3. provjera potpisa datoteke
- * (ne vjerujemo MIME tipu ni imenu), 4. dekodiranje i ponovno kodiranje u WebP preko sharpa
- * (uklanja EXIF/GPS i odbija oštećene ili zlonamjerne datoteke), 5. nasumična putanja,
+ * (ne vjerujemo MIME tipu ni imenu), 4. dekodiranje i ponovno kodiranje u WebP preko
+ * Cloudflare Images (uklanja EXIF/GPS i odbija oštećene ili zlonamjerne datoteke), 5. nasumična putanja,
  * 6. zapis u bazu; ako zapis ne uspije, datoteka se briše.
  */
 export async function POST(request: Request, ctx: RouteContext<"/api/admin/vozila/[id]/slike">) {
@@ -61,20 +61,15 @@ export async function POST(request: Request, ctx: RouteContext<"/api/admin/vozil
   if (vErr) return fail(friendlyDbError(vErr), 500);
   if (!vehicle) return fail("Vozilo nije pronađeno.", 404);
 
-  let output: Buffer;
+  let output: Uint8Array;
   let width: number;
   let height: number;
   try {
-    const result = await sharp(input, { limitInputPixels: 60_000_000, failOn: "error" })
-      .rotate() // poštuje EXIF orijentaciju, a metapodaci se ne prenose
-      .resize({ width: MAX_IMAGE_EDGE, height: MAX_IMAGE_EDGE, fit: "inside", withoutEnlargement: true })
-      .webp({ quality: 84, effort: 4 })
-      .toBuffer({ resolveWithObject: true });
-    output = result.data;
-    width = result.info.width;
-    height = result.info.height;
-  } catch {
-    return fail("Datoteku nije moguće obraditi. Je li fotografija oštećena?", 422);
+    ({ data: output, width, height } = await reencodeToWebp(input));
+  } catch (e) {
+    if (e instanceof ImageProcessingError) return fail(e.message, 422);
+    console.error("[upload] Obrada fotografije nije uspjela:", e);
+    return fail("Obrada fotografije nije uspjela. Pokušajte ponovno.", 500);
   }
 
   const imageId = randomUUID();

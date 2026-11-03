@@ -14,6 +14,10 @@ export type InquiryState =
   | { status: "error"; message: string; fieldErrors?: { email?: string; message?: string }; values?: { email: string; message: string } };
 
 function clientIp(h: Headers): string {
+  // Na Cloudflareu je CF-Connecting-IP pouzdana adresa posjetitelja (postavlja je Cloudflare,
+  // posjetitelj je ne može podmetnuti); X-Forwarded-For je rezerva za lokalni razvoj.
+  const cf = h.get("cf-connecting-ip");
+  if (cf) return cf.trim();
   const forwarded = h.get("x-forwarded-for");
   if (forwarded) return forwarded.split(",")[0]!.trim();
   return h.get("x-real-ip") ?? "nepoznato";

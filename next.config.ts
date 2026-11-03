@@ -1,3 +1,4 @@
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 import type { NextConfig } from "next";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://example.supabase.co";
@@ -48,7 +49,8 @@ const nextConfig: NextConfig = {
     qualities: [75],
     // Lokalni Supabase (127.0.0.1) radi samo u razvoju
     dangerouslyAllowLocalIP: process.env.NODE_ENV === "development",
-    minimumCacheTTL: 2678400, // 31 dan — putanje slika su nepromjenjive (UUID)
+    // Na Cloudflareu smanjivanje radi Cloudflare Images (IMAGES binding); minimumCacheTTL
+    // tamo nije podržan — putanje fotografija su ionako nepromjenjive (UUID).
     remotePatterns: [
       {
         protocol: supabase.protocol.replace(":", "") as "http" | "https",
@@ -69,3 +71,6 @@ const nextConfig: NextConfig = {
 };
 
 export default nextConfig;
+
+// Lokalni razvoj (`next dev`): omogućuje Cloudflare bindinge (IMAGES, R2…) kao na produkciji.
+initOpenNextCloudflareForDev();

@@ -25,9 +25,9 @@ export const LEGAL = {
 } as const;
 
 export const POLICY = {
-  version: "1.0",
+  version: "1.1",
   /** Datum od kojeg vrijedi trenutna verzija pravnih tekstova. */
-  effectiveDate: "2. 11. 2026.",
+  effectiveDate: "3. 11. 2026.",
 } as const;
 
 /** Rokovi čuvanja — moraju se podudarati s migracijom 20261102100000_privacy_retention.sql. */

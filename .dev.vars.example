@@ -1,0 +1,3 @@
+# Lokalne vrijednosti za `npm run preview` (Cloudflare runtime na vašem računalu).
+# Kopirajte u .dev.vars — ta datoteka se NIKAD ne commita (.gitignore).
+NEXTJS_ENV=development
