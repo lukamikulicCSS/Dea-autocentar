@@ -35,7 +35,7 @@ export default async function HomePage() {
           {/* Fotografija + dva animirana sloja iste veličine (uvijek se poklapaju s autom) */}
           <div className="hero-image absolute inset-0">
             <Image
-              src="/images/hero-porsche-911.jpg"
+              src="/images/hero-porsche-911-v2.jpg"
               alt="Porsche 911 obasjan svjetlosnim tragovima"
               fill
               priority
