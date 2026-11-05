@@ -13,6 +13,8 @@
   "main": "worker.ts",
   "compatibility_date": "2026-10-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+    // Varijable dok stranica radi (NE tajne). Tajne: npx wrangler secret put IME
+  "vars": { "ALLOW_INDEXING": "true" },
 
   // Worker se izvršava blizu baze (Supabase, Frankfurt), a ne blizu posjetitelja:
   // svaka stranica čita bazu, pa je ovo brže od izvršavanja „na rubu“.
@@ -22,7 +24,7 @@
 
   // Adresa *.workers.dev služi samo za testiranje prije spajanja domene.
   // Kad autocentardea.ba proradi, postavite na false (da Google ne vidi dvije iste stranice).
-  "workers_dev": true,
+  "workers_dev": false,
   "preview_urls": false,
 
     // Produkcijska domena
